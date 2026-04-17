@@ -500,26 +500,41 @@ async function loadFromSheets() {
   try {
     syncInFlight = true; updateSyncStatus();
     const d = await pullFromSheets();
-    if (d && d.rec && d.rec.length) {
-      const lastPushTs  = parseInt(localStorage.getItem('rc_last_push_ts') || '0');
-      const remoteTs    = d.ts || 0;
-      const hasPending  = syncQueue.length > 0;
+    if (!d) { syncInFlight = false; updateSyncStatus(); return false; }
 
-      if (hasPending || remoteTs <= lastPushTs) {
-        // Our local data is at least as fresh as the remote —
-        // push local version to make sure remote is up to date
-        if (hasPending) await flushQueue();
-        else {
-          // No queue but remote is older — silently push local to correct it
-          syncQueue.push({ts: Date.now()}); saveQueue();
-          await flushQueue();
-        }
-      } else {
-        // Remote is genuinely newer — pull it down
-        REC = d.rec; NID = d.nid || NID; TID = d.tid || TID;
-        localStorage.setItem(STORE, JSON.stringify({rec:REC, nid:NID, tid:TID}));
-        localStorage.setItem('rc_last_push_ts', String(remoteTs));
-        render();
+    // Use the remote ts as the source of truth, even when rec is empty.
+    // This is critical so deletions on one device propagate to others.
+    const lastPushTs  = parseInt(localStorage.getItem('rc_last_push_ts') || '0');
+    const remoteTs    = d.ts || 0;
+    const hasPending  = syncQueue.length > 0;
+    const remoteRec   = Array.isArray(d.rec) ? d.rec : [];
+
+    if (hasPending) {
+      // We have local changes that haven't synced yet — push them up
+      await flushQueue();
+    } else if (remoteTs > lastPushTs) {
+      // Remote is genuinely newer — accept it as authoritative
+      // (this includes the case where remote has fewer records due to deletes
+      // on another device, OR remote is empty)
+      REC = remoteRec;
+      NID = d.nid || NID;
+      TID = d.tid || TID;
+      localStorage.setItem(STORE, JSON.stringify({rec:REC, nid:NID, tid:TID}));
+      localStorage.setItem('rc_last_push_ts', String(remoteTs));
+      render();
+    } else if (remoteTs === 0 && lastPushTs === 0 && remoteRec.length > 0 && REC.length === 0) {
+      // First-ever load on a brand-new device: no timestamps yet, accept remote
+      REC = remoteRec;
+      NID = d.nid || NID;
+      TID = d.tid || TID;
+      localStorage.setItem(STORE, JSON.stringify({rec:REC, nid:NID, tid:TID}));
+      render();
+    } else {
+      // Local is newer or tied — push local up to make sure remote matches
+      // (only if our local actually has content OR we know we have a recent push)
+      if (lastPushTs > 0 || REC.length > 0) {
+        syncQueue.push({ts: Date.now()}); saveQueue();
+        await flushQueue();
       }
     }
     syncInFlight = false; updateSyncStatus();

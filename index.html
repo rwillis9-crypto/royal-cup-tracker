@@ -473,10 +473,13 @@ async function flushQueue() {
   if (!syncCfg.scriptUrl || !isOnline || syncInFlight || !syncQueue.length) return;
   syncInFlight = true; updateSyncStatus();
   try {
-    // Always send full state — last write wins
-    const payload = {rec: REC, nid: NID, tid: TID, ts: Date.now()};
+    const ts = Date.now();
+    const payload = {rec: REC, nid: NID, tid: TID, ts};
     await pushToSheets(payload);
     syncQueue = []; saveQueue();
+    // Record when we last successfully pushed so loadFromSheets knows
+    // not to overwrite local data with older remote data
+    localStorage.setItem('rc_last_push_ts', String(ts));
   } catch(e) {
     console.warn('Sync flush failed:', e);
   }
@@ -484,10 +487,11 @@ async function flushQueue() {
 }
 
 // Queue a change and try to flush immediately
-function queueSync() {
+// Returns a promise that resolves when the flush completes (or fails)
+async function queueSync() {
   syncQueue.push({ts: Date.now()});
   saveQueue(); updateSyncStatus();
-  if (isOnline) flushQueue();
+  if (isOnline) await flushQueue();
 }
 
 // ── Load from Sheets on startup (if online) ────────────────────────────────
@@ -497,14 +501,24 @@ async function loadFromSheets() {
     syncInFlight = true; updateSyncStatus();
     const d = await pullFromSheets();
     if (d && d.rec && d.rec.length) {
-      // Conflict: if we have queued local changes, local wins (last-write-wins)
-      if (syncQueue.length > 0) {
-        // Push our local version over the remote
-        await flushQueue();
+      const lastPushTs  = parseInt(localStorage.getItem('rc_last_push_ts') || '0');
+      const remoteTs    = d.ts || 0;
+      const hasPending  = syncQueue.length > 0;
+
+      if (hasPending || remoteTs <= lastPushTs) {
+        // Our local data is at least as fresh as the remote —
+        // push local version to make sure remote is up to date
+        if (hasPending) await flushQueue();
+        else {
+          // No queue but remote is older — silently push local to correct it
+          syncQueue.push({ts: Date.now()}); saveQueue();
+          await flushQueue();
+        }
       } else {
-        // Remote is authoritative
+        // Remote is genuinely newer — pull it down
         REC = d.rec; NID = d.nid || NID; TID = d.tid || TID;
         localStorage.setItem(STORE, JSON.stringify({rec:REC, nid:NID, tid:TID}));
+        localStorage.setItem('rc_last_push_ts', String(remoteTs));
         render();
       }
     }
@@ -522,7 +536,12 @@ const $ = id => document.getElementById(id);
 function save() {
   localStorage.setItem(STORE, JSON.stringify({rec: REC, nid: NID, tid: TID}));
   const el = $('sv'); if (el) el.textContent = 'Saved ' + new Date().toLocaleTimeString();
-  queueSync();
+  queueSync(); // async — fires and forgets for normal saves; deletes use saveAndWait
+}
+async function saveAndWait() {
+  localStorage.setItem(STORE, JSON.stringify({rec: REC, nid: NID, tid: TID}));
+  const el = $('sv'); if (el) el.textContent = 'Saved ' + new Date().toLocaleTimeString();
+  await queueSync();
 }
 function load() {
   loadSyncCfg();
@@ -1054,7 +1073,9 @@ function toggleShowDone(recId) {
 }
 function delRec(id) {
   if (confirm('Delete this record? This cannot be undone.')) {
-    REC = REC.filter(x => x.id !== id); save(); closeModal('ov-main'); render();
+    REC = REC.filter(x => x.id !== id);
+    closeModal('ov-main'); render();
+    saveAndWait(); // awaits flush so Google Sheets is updated before any refresh
   }
 }
 

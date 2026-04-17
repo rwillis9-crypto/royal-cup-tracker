@@ -100,7 +100,8 @@ body::before{content:'';display:block;height:3px;background:var(--navy);position
 .btn.danger{background:var(--red);color:#fff;border-color:var(--red)}
 
 /* Stats */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:7px;margin-bottom:14px}
+.stats{display:grid;grid-template-columns:repeat(2,max-content);gap:10px;margin-bottom:14px;justify-content:start}
+.stat{min-width:140px}
 .stat{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:9px 12px;box-shadow:var(--shd);cursor:pointer;transition:all .15s}
 .stat:hover{border-color:var(--bdr2)}
 .stat.on{border-color:var(--navy);background:var(--navy)}
@@ -441,9 +442,9 @@ select {
   .btn { height: 44px; font-size: 15px; padding: 0 16px; font-weight: 500; }
   .btn.pri, .btn.amb, .btn.grn { font-weight: 600; }
 
-  /* Stats: 2 columns on mobile, larger numbers */
-  .stats { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-  .stat { padding: 11px 13px; border-radius: var(--rl); }
+  /* Stats: 2 equal columns on mobile, larger numbers */
+  .stats { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat { padding: 12px 14px; border-radius: var(--rl); min-width: 0; }
   .sn { font-size: 24px; letter-spacing: -.5px; }
   .sl { font-size: 10.5px; margin-top: 3px; }
 
@@ -1336,23 +1337,23 @@ function filtered() {
 
 // ── Stats ──────────────────────────────────────────────────────────────────
 function renderStats() {
-  const p    = REC.filter(r => r.type === 'prospect').length;
-  const a    = REC.filter(r => r.type === 'account').length;
-  const req  = REC.filter(r => r.type === 'account' && r.stage === 'New Request').length;
-  const h    = REC.filter(r => r.stage === 'On Hold').length;
-  const over = REC.filter(r => openTasks(r).some(t => dStat(t.due) === 'over')).length;
-  const due  = REC.filter(r => openTasks(r).some(t => { const s = dStat(t.due); return s === 'soon' || s === 'over'; })).length;
-  const inst = REC.filter(r => { if (!r.installDate) return false; const x = dDiff(r.installDate); return x !== null && x >= 0 && x <= 30; }).length;
-  const prjOpen = openProjects().length;
+  const p = REC.filter(r => r.type === 'prospect').length;
+  const a = REC.filter(r => r.type === 'account').length;
+  // Two compact clickable tiles that jump to Cards view filtered appropriately
   $('stats-bar').innerHTML = `
-    <div class="stat" onclick="quickFilter('prospect')"><div class="sn">${p}</div><div class="sl">Prospects</div></div>
-    <div class="stat" onclick="quickFilter('account')"><div class="sn">${a}</div><div class="sl">My Accounts</div></div>
-    <div class="stat" onclick="quickFilter('request')"><div class="sn">${req}</div><div class="sl">Requests</div></div>
-    <div class="stat" onclick="quickFilter('hold')"><div class="sn">${h}</div><div class="sl">On Hold</div></div>
-    <div class="stat" onclick="quickFilter('due')"><div class="sn" style="color:${over>0?'var(--red)':'inherit'}">${due}</div><div class="sl">Due Soon</div></div>
-    <div class="stat" style="cursor:default"><div class="sn" style="color:${inst>0?'var(--amb)':'inherit'}">${inst}</div><div class="sl">Installs ≤30d</div></div>
-    <div class="stat" onclick="goToProjects()"><div class="sn" style="color:${prjOpen>0?'#5C7BBF':'inherit'}">${prjOpen}</div><div class="sl">Projects</div></div>
-    <div class="stat" style="cursor:default"><div class="sn">${REC.length}</div><div class="sl">Total Records</div></div>`;
+    <div class="stat" onclick="jumpToFilter('prospect')" title="View all prospects">
+      <div class="sn">${p}</div><div class="sl">Prospects</div>
+    </div>
+    <div class="stat" onclick="jumpToFilter('account')" title="View all customers">
+      <div class="sn">${a}</div><div class="sl">Customers</div>
+    </div>`;
+}
+// Jump to Cards view with a filter tab applied
+function jumpToFilter(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.ftab').forEach(t => t.classList.toggle('on', t.dataset.t === tab));
+  const cardsBtn = document.querySelector('[data-v="cards"]');
+  if (cardsBtn) setView(cardsBtn);
 }
 function goToProjects() {
   const btn = document.querySelector('[data-v="projects"]');

@@ -700,7 +700,7 @@ select {
       <select id="sf" onchange="render()">
         <option value="">All stages</option>
         <option>Prospect</option><option>Active</option><option>Proposal</option>
-        <option>Won</option><option>Lost</option><option>Customer</option>
+        <option>Won</option><option>Customer</option>
         <option>On Hold</option><option>New Request</option>
       </select>
       <select id="pf" onchange="render()">
@@ -1010,6 +1010,16 @@ function load() {
       REC = d.rec; NID = d.nid || 1; TID = d.tid || 100;
       PRJ = d.prj || []; PJID = d.pjid || 1;
       if (d.cats && Array.isArray(d.cats) && d.cats.length) PROJECT_CATEGORIES = d.cats;
+      // Migration: any records with stage='Lost' -> move to 'On Hold' with a note
+      let migrated = 0;
+      REC.forEach(r => {
+        if (r.stage === 'Lost') {
+          r.stage = 'On Hold';
+          r.holdReason = (r.holdReason ? r.holdReason + ' — ' : '') + 'Previously marked Lost';
+          migrated++;
+        }
+      });
+      if (migrated > 0) save();
     } else seed();
   } catch(e) { seed(); }
 }
@@ -1034,15 +1044,15 @@ function dpCls(s) { const st = dStat(s); return st === 'over' ? 'due-over' : st 
 function scls(s) { return 'b-' + s.toLowerCase().replace(/\s+/g,'-'); }
 function pcls(p) { return p === 'High' ? 'p-hi' : p === 'Medium' ? 'p-md' : 'p-lo'; }
 function sdot(s) {
-  const m = {Prospect:'#1B2A4A',Active:'#1A7A52',Proposal:'#C9A84C',Won:'#0D4A2F',Lost:'#B83030',Customer:'#1B2A4A','On Hold':'#9B8F82','New Request':'#C9A84C'};
+  const m = {Prospect:'#1B2A4A',Active:'#1A7A52',Proposal:'#C9A84C',Won:'#0D4A2F',Customer:'#1B2A4A','On Hold':'#9B8F82','New Request':'#C9A84C'};
   return m[s] || '#aaa';
 }
 function sbg(s) {
-  const m = {Prospect:'#E8EDF5',Active:'#E0F3EA',Proposal:'#F5E6B8',Won:'#D6F0E8',Lost:'#FAE8E8',Customer:'#E8EDF5','On Hold':'#EDE5D8','New Request':'#F5E6B8'};
+  const m = {Prospect:'#E8EDF5',Active:'#E0F3EA',Proposal:'#F5E6B8',Won:'#D6F0E8',Customer:'#E8EDF5','On Hold':'#EDE5D8','New Request':'#F5E6B8'};
   return m[s] || '#eee';
 }
 function sfg(s) {
-  const m = {Prospect:'#1B2A4A',Active:'#0D4A2F',Proposal:'#7A5E10',Won:'#0D4A2F',Lost:'#741C1C',Customer:'#1B2A4A','On Hold':'#3D2E1E','New Request':'#7A5E10'};
+  const m = {Prospect:'#1B2A4A',Active:'#0D4A2F',Proposal:'#7A5E10',Won:'#0D4A2F',Customer:'#1B2A4A','On Hold':'#3D2E1E','New Request':'#7A5E10'};
   return m[s] || '#333';
 }
 function openTasks(r) { return (r.tasks || []).filter(t => !t.done); }
@@ -1421,7 +1431,7 @@ function cardHTML(r) {
 }
 
 // ── Kanban ─────────────────────────────────────────────────────────────────
-const STAGES = ['Prospect','Active','Proposal','On Hold','New Request','Customer','Won','Lost'];
+const STAGES = ['Prospect','Active','Proposal','On Hold','New Request','Customer','Won'];
 function renderKanban() {
   $('kb-board').innerHTML = STAGES.map(stage => {
     const cols = REC.filter(r => r.stage === stage);
@@ -1458,7 +1468,7 @@ function renderKanban() {
 // ── Table ──────────────────────────────────────────────────────────────────
 function renderTable() {
   const pOrd = {High:0,Medium:1,Low:2};
-  const sOrd = {Prospect:0,Active:1,Proposal:2,'New Request':3,Customer:4,'On Hold':5,Won:6,Lost:7};
+  const sOrd = {Prospect:0,Active:1,Proposal:2,'New Request':3,Customer:4,'On Hold':5,Won:6};
   let list = filtered();
   if (tblSort) {
     list = [...list].sort((a,b) => {
@@ -1768,7 +1778,7 @@ function renderTasks() {
   const groupBy = $('tk-group')?.value    || 'none';
   const pOrd_old = {High:0,Medium:1,Low:2};
   const pOrd_new = {P1:0,P2:1,P3:2,None:3};
-  const sOrd    = {Prospect:0,Active:1,Proposal:2,'New Request':3,Customer:4,'On Hold':5,Won:6,Lost:7};
+  const sOrd    = {Prospect:0,Active:1,Proposal:2,'New Request':3,Customer:4,'On Hold':5,Won:6};
   const {start: drStart, end: drEnd} = dateRangeBounds(drKey);
 
   // Pull from BOTH customer records and projects (unified view)
@@ -2216,7 +2226,7 @@ function showForm(r) {
       <input id="f-co" type="text" value="${r?r.company:''}" placeholder="e.g. Meridian Health, Site B – Atlanta…"></div></div>
     <div class="fr tri">
       <div><label>Stage</label><select id="f-stage" onchange="toggleHold()">
-        ${['Prospect','Active','Proposal','Won','Lost','Customer','On Hold','New Request'].map(s=>`<option${r&&r.stage===s?' selected':''}>${s}</option>`).join('')}
+        ${['Prospect','Active','Proposal','Won','Customer','On Hold','New Request'].map(s=>`<option${r&&r.stage===s?' selected':''}>${s}</option>`).join('')}
       </select></div>
       <div><label>Priority</label><select id="f-pri">
         ${['High','Medium','Low'].map(p=>`<option${(!r&&p==='High')||(r&&r.priority===p)?' selected':''}>${p}</option>`).join('')}

@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Royal Cup">
+<meta name="theme-color" content="#1B2A4A">
 <title>Royal Cup — Sales Tracker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -89,6 +93,57 @@ body::before{content:'';display:block;height:4px;background:linear-gradient(90de
 .due-soon{background:var(--amb-s);color:var(--amb-t)}
 .due-over{background:var(--red-s);color:var(--red-t)}
 .dpill{font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+/* P1/P2/P3 priority pills */
+.ppill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-block;letter-spacing:.03em}
+.p1{background:#FAE8E8;color:#741C1C;border:1px solid #B83030}
+.p2{background:#FBF4E0;color:#7A5E10;border:1px solid #C9A84C}
+.p3{background:#EDE5D8;color:#3D2E1E;border:1px solid #9B8F82}
+.pn{background:#F8F5EE;color:#9B8F82;border:1px dashed #C4B89E}
+/* Project view */
+.b-prj{background:#E8EDF5;color:#1B2A4A;font-size:9px;padding:1px 6px;border-radius:20px;font-weight:600}
+/* Parent/Child chain indicators */
+.b-parent{background:#1B2A4A;color:#fff;font-size:9px;padding:1px 7px;border-radius:20px;font-weight:600;letter-spacing:.03em}
+.b-child{background:#E8EDF5;color:#1B2A4A;font-size:9px;padding:1px 7px;border-radius:20px;font-weight:600;border:1px solid #5C7BBF}
+.card.is-parent{border-left:3px solid #1B2A4A;border-top:1px solid #1B2A4A}
+.card.is-child{border-left:3px dashed #5C7BBF}
+.kb-card.is-parent{border-left:2px solid #1B2A4A}
+.kb-card.is-child{border-left:2px dashed #5C7BBF}
+.parent-link{font-size:11px;color:#5C7BBF;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:3px}
+.parent-link:hover{text-decoration:underline}
+/* Children list inside a parent's detail view */
+.children-section{background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 12px;margin-bottom:10px}
+.child-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);margin-top:6px;cursor:pointer;transition:border-color .15s,box-shadow .12s}
+.child-row:hover{border-color:#5C7BBF;box-shadow:0 1px 3px rgba(92,123,191,.15)}
+.child-co{font-weight:600;font-size:13px;flex:1;min-width:0}
+.child-meta{font-size:11px;color:var(--text2);margin-top:1px}
+.child-stats{display:flex;gap:6px;font-size:11px;align-items:center;flex-shrink:0}
+.aggregate-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin-top:8px}
+.agg-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:7px 9px;text-align:center}
+.agg-n{font-size:18px;font-weight:600;color:var(--navy)}
+.agg-l{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);font-weight:500;margin-top:1px}
+
+.card.is-prj{border-left:3px solid #5C7BBF}
+.kb-card.is-prj{border-left:2px solid #5C7BBF}
+/* My Day cards */
+.md-section{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:14px 16px;box-shadow:var(--shd);margin-bottom:12px}
+.md-shdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--bdr)}
+.md-sdot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.md-stitle{font-size:13px;font-weight:700;letter-spacing:.02em;text-transform:uppercase}
+.md-scnt{font-size:11px;font-weight:600;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:1px 8px;color:var(--text2);margin-left:auto}
+.md-empty{padding:10px 4px;color:var(--text3);font-size:12px;font-style:italic;text-align:center}
+.md-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--r);transition:background .12s;cursor:pointer}
+.md-row:hover{background:var(--surf2)}
+.md-row+.md-row{border-top:1px solid #F0EBE2}
+.md-task{flex:1;font-size:12px;line-height:1.4}
+.md-co{font-size:11px;color:var(--text2);margin-top:1px}
+.md-cb{accent-color:var(--navy);width:14px;height:14px;flex-shrink:0;cursor:pointer}
+.md-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.md-grid{grid-template-columns:1fr}}
+/* Status pills for projects */
+.st-ns{background:var(--surf3);color:var(--gryt);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.st-ip{background:var(--gold-s);color:var(--gold-t);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.st-co{background:var(--grn-s);color:var(--grn-t);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+
 
 /* ── CARDS ── */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
@@ -245,6 +300,288 @@ table.tkt tbody tr:hover td{background:var(--surf2);cursor:pointer}
 .notebox{background:var(--surf2);border-radius:var(--r);padding:9px 12px;font-size:12px;color:var(--text2);margin-top:8px;line-height:1.6}
 /* Import preview */
 .imp4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+/* ═══════════════════════════════════════════════════════════════════════
+   MOBILE / TABLET RESPONSIVE STYLES
+   Phone breakpoint: 640px and below
+   Tablet breakpoint: 641px – 1024px
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Make date inputs look better on mobile (native picker) */
+input[type=date], input[type=number], input[type=text], select, textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
+}
+/* Keep the dropdown arrow on selects */
+select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235C5246' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+  padding-right: 28px;
+}
+
+/* Mobile header: "More" menu for secondary actions */
+.more-menu {
+  position: relative;
+  display: none;
+}
+.more-menu.show .more-pop {
+  display: flex;
+}
+.more-pop {
+  display: none;
+  position: absolute;
+  right: 0; top: calc(100% + 4px);
+  z-index: 200;
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rl);
+  box-shadow: var(--shd-md);
+  flex-direction: column;
+  min-width: 180px;
+  padding: 6px;
+}
+.more-pop button {
+  text-align: left;
+  justify-content: flex-start;
+  border: none;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: transparent;
+  border-radius: var(--r);
+}
+.more-pop button:hover {
+  background: var(--surf2);
+}
+
+/* ── TABLET (iPad) adjustments ─────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .app { padding: 12px 14px; }
+  body { font-size: 15px; }
+  .hdr h1 { font-size: 20px; }
+  .btn { height: 38px; font-size: 14px; padding: 0 14px; }
+  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+  .sn { font-size: 22px; }
+  .vbtn { padding: 9px 16px; font-size: 14px; }
+  .modal { width: min(680px, 96vw); padding: 24px; }
+  .mh { font-size: 18px; }
+}
+
+/* ── MOBILE (iPhone portrait) — main readability pass ────────────── */
+@media (max-width: 640px) {
+  body { font-size: 16px; line-height: 1.5; -webkit-text-size-adjust: 100%; }
+  .app { padding: 10px 12px; max-width: 100%; }
+
+  /* Header — cleaner, app-like */
+  .hdr { flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: 12px; }
+  .hdr h1 { font-size: 20px; letter-spacing: -.4px; }
+  .hdr .sv { font-size: 11px; }
+  .hdr-r { justify-content: flex-end; gap: 8px; }
+
+  /* Hide overflow buttons in header — move to "More" menu */
+  .hdr-r .btn.mobile-hide { display: none; }
+  .more-menu { display: inline-block; }
+
+  /* All buttons — Apple's 44px minimum tap target */
+  .btn { height: 44px; font-size: 15px; padding: 0 16px; font-weight: 500; }
+  .btn.pri, .btn.amb, .btn.grn { font-weight: 600; }
+
+  /* Stats: 2 columns on mobile, larger numbers */
+  .stats { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .stat { padding: 11px 13px; border-radius: var(--rl); }
+  .sn { font-size: 24px; letter-spacing: -.5px; }
+  .sl { font-size: 10.5px; margin-top: 3px; }
+
+  /* View bar: horizontal scroll with momentum */
+  .vbar {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--rl);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .vbar::-webkit-scrollbar { display: none; }
+  .vbtn {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    min-width: max-content;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+
+  /* Toolbar — stacks on mobile, bigger inputs */
+  .tbar { flex-direction: column; align-items: stretch; gap: 8px; }
+  .tbar input[type=text], .tbar select {
+    height: 44px; font-size: 15px; padding: 0 12px; width: 100%;
+  }
+
+  /* Filter tabs: easier to tap */
+  .ftabs { gap: 6px; margin: 10px 0; }
+  .ftab { padding: 8px 14px; font-size: 13px; font-weight: 600; }
+
+  /* ═════ CARDS: big readable layout ═════ */
+  .cards-grid { grid-template-columns: 1fr; gap: 10px; }
+  .card {
+    padding: 16px 18px;
+    border-radius: var(--rl);
+    box-shadow: var(--shd-md);
+    border-left-width: 4px;
+  }
+  .c-top { margin-bottom: 12px; }
+  .c-name { font-size: 17px; line-height: 1.3; font-weight: 600; }
+  .c-sub { font-size: 13px; margin-top: 3px; }
+  .c-badges { gap: 5px; }
+  .bdg { font-size: 11px; padding: 3px 10px; font-weight: 600; }
+  .b-acc, .b-pro, .b-parent, .b-child, .b-prj { font-size: 10px; padding: 2px 8px; }
+  .c-row { font-size: 14px; margin-top: 7px; line-height: 1.4; }
+  .c-lbl { font-size: 11px; min-width: 50px; letter-spacing: .05em; }
+  .c-val { line-height: 1.4; }
+  .next-box { padding: 10px 12px; margin-top: 10px; border-radius: var(--r); }
+  .next-lbl { font-size: 11px; }
+  .next-txt { font-size: 14px; line-height: 1.5; margin: 0 6px; }
+  .more-tasks { font-size: 11px; margin-top: 5px; }
+  .inst-row { font-size: 13px; margin-top: 8px; }
+  .c-foot {
+    font-size: 13px; margin-top: 12px; padding-top: 10px; gap: 10px;
+  }
+  .dpill { font-size: 11px; padding: 3px 9px; font-weight: 600; }
+  .ppill { font-size: 11px; padding: 3px 10px; }
+
+  /* ═════ My Day view: breathable on mobile ═════ */
+  .md-section { padding: 14px 16px; border-radius: var(--rl); margin-bottom: 14px; }
+  .md-shdr { margin-bottom: 12px; padding-bottom: 10px; gap: 10px; }
+  .md-stitle { font-size: 14px; }
+  .md-scnt { font-size: 12px; padding: 2px 10px; }
+  .md-row {
+    padding: 12px 10px; gap: 12px; border-radius: var(--r); align-items: flex-start;
+  }
+  .md-row+.md-row { border-top-color: var(--bdr); }
+  .md-cb { width: 22px; height: 22px; margin-top: 2px; }
+  .md-task { font-size: 15px; line-height: 1.4; font-weight: 500; }
+  .md-co { font-size: 12px; margin-top: 4px; line-height: 1.4; }
+  .md-grid { grid-template-columns: 1fr; gap: 14px; }
+
+  /* Tables: horizontal scroll wrapper */
+  .tbl-wrap, .tk-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--rl); }
+  table.ct, table.tkt { font-size: 14px; min-width: 620px; }
+  table.ct th, table.tkt th { padding: 10px 12px; font-size: 11px; }
+  table.ct td, table.tkt td { padding: 12px 12px; }
+  .t-name, .tk-co { font-size: 14px; }
+  .tk-title { font-size: 14px; line-height: 1.4; }
+  .tsbtn { padding: 7px 12px; font-size: 12px; }
+  /* Table options (column checkboxes) — stack */
+  .tbl-opts { flex-direction: column; align-items: stretch; font-size: 13px; gap: 10px; }
+  .tbl-opts label { padding: 4px 0; }
+
+  /* Task toolbar: vertical stack */
+  .tk-opts { flex-direction: column; align-items: stretch; gap: 10px; }
+  .tk-opts .vbar { width: 100%; }
+  .tk-opts select { width: 100%; height: 44px; font-size: 15px; }
+  .tk-opts .btn { width: 100%; justify-content: center; }
+  .tk-opts .hint { font-size: 11px; color: var(--text3); text-align: center; }
+
+  /* Kanban: allow horizontal scroll, tighter columns */
+  .kb-col { width: 260px; }
+  .kb-name { font-size: 14px; }
+  .kb-val { font-size: 12px; }
+  .kb-next { font-size: 12px; padding: 6px 9px; line-height: 1.4; }
+
+  /* ═════ Modal: full screen on phones ═════ */
+  .overlay { padding: 0; }
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+    padding: 16px 18px 80px 18px;   /* extra bottom padding for footer buttons */
+    min-height: 100vh;
+  }
+  /* Close button: fixed top right, bigger */
+  .modal .mh { font-size: 19px; padding-right: 40px; }
+
+  /* Form rows: all single column on phone */
+  .fr, .fr.tri { grid-template-columns: 1fr !important; gap: 12px; margin-bottom: 12px; }
+  .fr label { font-size: 13px; margin-bottom: 5px; }
+  .fr input, .fr select, .fr textarea {
+    height: 44px; font-size: 16px; padding: 0 12px;
+  }
+  .fr textarea { min-height: 80px; padding: 10px 12px; height: auto; }
+  .fr input[type=date] { padding: 0 10px; }
+
+  /* Detail view: bigger, more breathing room */
+  .dbox { padding: 12px 14px; margin-bottom: 10px; border-radius: var(--r); }
+  .dl { font-size: 11px; margin-bottom: 4px; }
+  .dv { font-size: 14px; }
+  .d2 { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Task items in detail: iOS checkbox feel */
+  .titem {
+    padding: 12px 12px; gap: 10px; font-size: 14px;
+    flex-wrap: wrap; border-radius: var(--r);
+  }
+  .titem input[type=checkbox] { width: 22px; height: 22px; flex-shrink: 0; }
+  .titem .tt { font-size: 15px; line-height: 1.4; min-width: 0; }
+  .titem .tdp { font-size: 11px; padding: 3px 8px; }
+  .tdel { width: 30px; height: 30px; font-size: 20px; }
+
+  /* Add-task input: stack vertically on phone */
+  .add-task {
+    flex-direction: column; align-items: stretch; gap: 8px; margin-top: 12px;
+  }
+  .add-task input[type=text] { height: 44px; font-size: 16px; padding: 0 12px; width: 100%; }
+  .add-task input[type=date] { height: 44px; font-size: 15px; width: 100%; }
+  .add-task input[type=number] { height: 44px; font-size: 15px; width: 100%; }
+  .add-task select { height: 44px; font-size: 15px; width: 100%; }
+  .add-task .abtn { height: 44px; padding: 0 16px; font-size: 14px; width: 100%; }
+
+  /* Modal footer: pin to bottom with backdrop */
+  .mfoot {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 14px;
+    margin-top: 18px;
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), var(--surf) 30%);
+    padding-bottom: 10px;
+  }
+  .mfoot .btn { width: 100%; justify-content: center; height: 46px; font-size: 15px; font-weight: 600; }
+
+  /* Children section in detail */
+  .children-section { padding: 12px 14px; }
+  .aggregate-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .agg-card { padding: 10px 12px; }
+  .agg-n { font-size: 20px; }
+  .agg-l { font-size: 10px; }
+  .child-row { padding: 12px 12px; }
+  .child-co { font-size: 14px; }
+  .child-meta { font-size: 12px; margin-top: 3px; }
+
+  /* Type toggle */
+  .tpbtn { padding: 10px 16px; font-size: 14px; min-height: 44px; }
+
+  /* Section headers in forms */
+  .sec { font-size: 11px; margin: 16px 0 10px; padding-bottom: 6px; }
+
+  /* Import preview stat tiles */
+  .imp4 { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── SMALL iPhone (iPhone SE etc) ──────────────────────────────── */
+@media (max-width: 380px) {
+  .app { padding: 8px 10px; }
+  .c-name { font-size: 16px; }
+  .md-task { font-size: 14px; }
+  .stats { gap: 6px; }
+}
+
 /* Print */
 @media print{
   body{background:#fff}
@@ -271,14 +608,25 @@ table.tkt tbody tr:hover td{background:var(--surf2);cursor:pointer}
       <div id="sync-status" style="font-size:11px;margin-top:3px;font-family:var(--mono);display:flex;align-items:center;gap:5px"></div>
     </div>
     <div class="hdr-r no-print">
-      <button class="btn" onclick="doBackup()">💾 Backup</button>
-      <button class="btn" onclick="$('j-imp').click()">📂 Restore</button>
+      <button class="btn mobile-hide" onclick="doBackup()">💾 Backup</button>
+      <button class="btn mobile-hide" onclick="$('j-imp').click()">📂 Restore</button>
       <input type="file" id="j-imp" accept=".json" style="display:none" onchange="doRestore(event)">
-      <button class="btn imp" onclick="$('xl-imp').click()">📥 Import Excel</button>
+      <button class="btn imp mobile-hide" onclick="$('xl-imp').click()">📥 Import Excel</button>
       <input type="file" id="xl-imp" accept=".xlsx,.xls" style="display:none" onchange="xlImport(event)">
-      <button class="btn grn" onclick="xlExport()">📊 Excel</button>
-      <button class="btn amb" onclick="openPdfModal()">📄 PDF</button>
+      <button class="btn grn mobile-hide" onclick="xlExport()">📊 Excel</button>
+      <button class="btn amb mobile-hide" onclick="openPdfModal()">📄 PDF</button>
       <button class="btn" onclick="openSyncSetup()" id="sync-btn" title="Google Sheets sync settings">☁ Sync</button>
+      <!-- Mobile-only "More" menu containing the hidden actions -->
+      <div class="more-menu" id="more-menu">
+        <button class="btn" onclick="toggleMoreMenu(event)" style="padding:0 14px">⋯</button>
+        <div class="more-pop">
+          <button class="btn" onclick="hideMoreMenu();doBackup()">💾 Backup</button>
+          <button class="btn" onclick="hideMoreMenu();$('j-imp').click()">📂 Restore</button>
+          <button class="btn" onclick="hideMoreMenu();$('xl-imp').click()">📥 Import Excel</button>
+          <button class="btn" onclick="hideMoreMenu();xlExport()">📊 Excel Export</button>
+          <button class="btn" onclick="hideMoreMenu();openPdfModal()">📄 PDF Export</button>
+        </div>
+      </div>
       <button class="btn pri" onclick="openAdd()">+ Add</button>
     </div>
   </div>
@@ -287,10 +635,12 @@ table.tkt tbody tr:hover td{background:var(--surf2);cursor:pointer}
 
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px" class="no-print">
     <div class="vbar">
-      <button class="vbtn on" data-v="cards"  onclick="setView(this)">▦ Cards</button>
-      <button class="vbtn"    data-v="kanban" onclick="setView(this)">⬛ Board</button>
-      <button class="vbtn"    data-v="table"  onclick="setView(this)">☰ Table</button>
-      <button class="vbtn"    data-v="tasks"  onclick="setView(this)">✓ Task List</button>
+      <button class="vbtn on" data-v="myday"   onclick="setView(this)">☀ My Day</button>
+      <button class="vbtn"    data-v="tasks"   onclick="setView(this)">✓ Tasks</button>
+      <button class="vbtn"    data-v="projects" onclick="setView(this)">🗂 Projects</button>
+      <button class="vbtn"    data-v="cards"   onclick="setView(this)">▦ Cards</button>
+      <button class="vbtn"    data-v="kanban"  onclick="setView(this)">⬛ Board</button>
+      <button class="vbtn"    data-v="table"   onclick="setView(this)">☰ Table</button>
     </div>
     <div class="tbar" id="main-tbar">
       <input type="text" id="srch" placeholder="Search…" oninput="render()">
@@ -304,6 +654,10 @@ table.tkt tbody tr:hover td{background:var(--surf2);cursor:pointer}
         <option value="">All priorities</option>
         <option>High</option><option>Medium</option><option>Low</option>
       </select>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);font-weight:500;cursor:pointer;white-space:nowrap;padding:0 6px">
+        <input type="checkbox" id="hide-children" onchange="render()" style="cursor:pointer">
+        Hide children
+      </label>
     </div>
   </div>
 
@@ -314,6 +668,35 @@ table.tkt tbody tr:hover td{background:var(--surf2);cursor:pointer}
     <button class="ftab"    data-t="request"   onclick="setTab(this)">Account Requests</button>
     <button class="ftab"    data-t="hold"      onclick="setTab(this)">On Hold</button>
     <button class="ftab"    data-t="due"       onclick="setTab(this)">Due Soon</button>
+  </div>
+
+  <div id="v-myday" style="display:none">
+    <div id="myday-content"></div>
+  </div>
+
+  <div id="v-projects" style="display:none">
+    <div class="tk-opts no-print" style="flex-wrap:wrap;gap:7px">
+      <select id="prj-status" onchange="renderProjects()">
+        <option value="all">All projects</option>
+        <option value="active">Active (Not Started + In Progress)</option>
+        <option value="Not Started">Not Started</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Complete">Complete</option>
+      </select>
+      <select id="prj-cat" onchange="renderProjects()">
+        <option value="">All categories</option>
+      </select>
+      <select id="prj-pri" onchange="renderProjects()">
+        <option value="">All priorities</option>
+        <option value="P1">P1 — Urgent</option>
+        <option value="P2">P2 — Do Soon</option>
+        <option value="P3">P3 — Parking Lot</option>
+        <option value="None">No Priority</option>
+      </select>
+      <input type="text" id="prj-search" placeholder="Search projects…" oninput="renderProjects()" style="height:32px;font-size:13px;padding:0 10px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font);outline:none;flex:1;min-width:150px">
+      <button class="btn pri" onclick="openAddProject()">+ Add Project</button>
+    </div>
+    <div id="projects-content"></div>
   </div>
 
   <div id="v-cards"><div class="cards-grid" id="cards-grid"></div></div>
@@ -341,7 +724,10 @@ table.tkt tbody tr:hover td{background:var(--surf2);cursor:pointer}
       </div>
       <!-- Scope (open only) -->
       <select id="tk-scope" onchange="renderTasks()">
-        <option value="all">All open tasks</option>
+        <option value="all">All open tasks (excludes P3)</option>
+        <option value="p1">P1 — Urgent only</option>
+        <option value="p2">P2 — Do Soon only</option>
+        <option value="parking">P3 — Parking Lot</option>
         <option value="due7">Due within 7 days</option>
         <option value="due30">Due within 30 days</option>
         <option value="over">Overdue</option>
@@ -399,7 +785,10 @@ const SYNC_STORE = 'rc_sync_cfg';
 const QUEUE_STORE= 'rc_sync_queue';
 const TODAY = new Date(); TODAY.setHours(0,0,0,0);
 let REC = [], NID = 1, TID = 100;
-let activeTab = 'all', activeView = 'cards';
+let activeTab = 'all', activeView = 'myday';
+let PRJ = [], PJID = 1;  // Projects (separate from REC)
+const DEFAULT_CATEGORIES = ['Price Increase', 'Administration', 'CRM', 'Reporting', 'Training', 'Marketing', 'Operations', 'Other'];
+let PROJECT_CATEGORIES = [...DEFAULT_CATEGORIES];
 let tblSort = '', tblDir = 1, expandedRow = null;
 let pendingImport = [];
 
@@ -453,7 +842,9 @@ function updateSyncStatus() {
 async function pushToSheets(fullData) {
   if (!syncCfg.scriptUrl) return;
   const payload = encodeURIComponent(JSON.stringify({
-    rec: fullData.rec, nid: fullData.nid, tid: fullData.tid, ts: fullData.ts
+    rec: fullData.rec, nid: fullData.nid, tid: fullData.tid,
+    prj: fullData.prj || [], pjid: fullData.pjid || 1,
+    cats: fullData.cats || null, ts: fullData.ts
   }));
   const url = syncCfg.scriptUrl + '?action=set&d=' + payload + '&cb=' + Date.now();
   const resp = await fetch(url, {redirect: 'follow'});
@@ -474,11 +865,9 @@ async function flushQueue() {
   syncInFlight = true; updateSyncStatus();
   try {
     const ts = Date.now();
-    const payload = {rec: REC, nid: NID, tid: TID, ts};
+    const payload = {rec: REC, nid: NID, tid: TID, prj: PRJ, pjid: PJID, cats: PROJECT_CATEGORIES, ts};
     await pushToSheets(payload);
     syncQueue = []; saveQueue();
-    // Record when we last successfully pushed so loadFromSheets knows
-    // not to overwrite local data with older remote data
     localStorage.setItem('rc_last_push_ts', String(ts));
   } catch(e) {
     console.warn('Sync flush failed:', e);
@@ -513,21 +902,23 @@ async function loadFromSheets() {
       // We have local changes that haven't synced yet — push them up
       await flushQueue();
     } else if (remoteTs > lastPushTs) {
-      // Remote is genuinely newer — accept it as authoritative
-      // (this includes the case where remote has fewer records due to deletes
-      // on another device, OR remote is empty)
       REC = remoteRec;
       NID = d.nid || NID;
       TID = d.tid || TID;
-      localStorage.setItem(STORE, JSON.stringify({rec:REC, nid:NID, tid:TID}));
+      PRJ = Array.isArray(d.prj) ? d.prj : [];
+      PJID = d.pjid || 1;
+      if (d.cats && Array.isArray(d.cats) && d.cats.length) PROJECT_CATEGORIES = d.cats;
+      localStorage.setItem(STORE, JSON.stringify({rec:REC, nid:NID, tid:TID, prj:PRJ, pjid:PJID, cats:PROJECT_CATEGORIES}));
       localStorage.setItem('rc_last_push_ts', String(remoteTs));
       render();
     } else if (remoteTs === 0 && lastPushTs === 0 && remoteRec.length > 0 && REC.length === 0) {
-      // First-ever load on a brand-new device: no timestamps yet, accept remote
       REC = remoteRec;
       NID = d.nid || NID;
       TID = d.tid || TID;
-      localStorage.setItem(STORE, JSON.stringify({rec:REC, nid:NID, tid:TID}));
+      PRJ = Array.isArray(d.prj) ? d.prj : [];
+      PJID = d.pjid || 1;
+      if (d.cats && Array.isArray(d.cats) && d.cats.length) PROJECT_CATEGORIES = d.cats;
+      localStorage.setItem(STORE, JSON.stringify({rec:REC, nid:NID, tid:TID, prj:PRJ, pjid:PJID, cats:PROJECT_CATEGORIES}));
       render();
     } else {
       // Local is newer or tied — push local up to make sure remote matches
@@ -549,12 +940,12 @@ async function loadFromSheets() {
 // ── Utility ────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 function save() {
-  localStorage.setItem(STORE, JSON.stringify({rec: REC, nid: NID, tid: TID}));
+  localStorage.setItem(STORE, JSON.stringify({rec: REC, nid: NID, tid: TID, prj: PRJ, pjid: PJID, cats: PROJECT_CATEGORIES}));
   const el = $('sv'); if (el) el.textContent = 'Saved ' + new Date().toLocaleTimeString();
-  queueSync(); // async — fires and forgets for normal saves; deletes use saveAndWait
+  queueSync();
 }
 async function saveAndWait() {
-  localStorage.setItem(STORE, JSON.stringify({rec: REC, nid: NID, tid: TID}));
+  localStorage.setItem(STORE, JSON.stringify({rec: REC, nid: NID, tid: TID, prj: PRJ, pjid: PJID, cats: PROJECT_CATEGORIES}));
   const el = $('sv'); if (el) el.textContent = 'Saved ' + new Date().toLocaleTimeString();
   await queueSync();
 }
@@ -562,8 +953,11 @@ function load() {
   loadSyncCfg();
   try {
     const d = JSON.parse(localStorage.getItem(STORE) || '{}');
-    if (d.rec && d.rec.length) { REC = d.rec; NID = d.nid || 1; TID = d.tid || 100; }
-    else seed();
+    if (d.rec && d.rec.length) {
+      REC = d.rec; NID = d.nid || 1; TID = d.tid || 100;
+      PRJ = d.prj || []; PJID = d.pjid || 1;
+      if (d.cats && Array.isArray(d.cats) && d.cats.length) PROJECT_CATEGORIES = d.cats;
+    } else seed();
   } catch(e) { seed(); }
 }
 function tid() { return 'tk' + (TID++); }
@@ -605,6 +999,201 @@ function soonest(r) {
     || null;
 }
 
+// ── Priority system (P1/P2/P3) ────────────────────────────────────────────
+// Auto rule:
+//   P1 (Urgent):     due in 0-7 days, including overdue
+//   P2 (Do Soon):    due in 8-14 days
+//   P3 (Parking Lot): due in 15+ days (or manually set)
+//   None:            no due date
+// Manual override: t.priorityOverride is one of 'P1','P2','P3','None'
+function autoPriority(t) {
+  if (!t.due) return 'None';
+  const d = dDiff(t.due);
+  if (d === null) return 'None';
+  if (d <= 7) return 'P1';
+  if (d <= 14) return 'P2';
+  return 'P3';
+}
+function taskPriority(t) {
+  if (t.priorityOverride && ['P1','P2','P3','None'].includes(t.priorityOverride)) {
+    return t.priorityOverride;
+  }
+  return autoPriority(t);
+}
+function priorityLabel(p) {
+  return p==='P1'?'P1 — Urgent':p==='P2'?'P2 — Do Soon':p==='P3'?'P3 — Parking Lot':'No Priority';
+}
+function priorityClass(p) {
+  return p==='P1'?'p1':p==='P2'?'p2':p==='P3'?'p3':'pn';
+}
+function priorityShort(p) {
+  return p==='None' ? 'No Priority' : p;
+}
+
+// ── Parent/Child relationship helpers ──────────────────────────────────────
+function isParent(r) { return REC.some(x => x.parentId === r.id); }
+function isChild(r)  { return r.parentId != null && r.parentId !== ''; }
+function getChildren(parentId) { return REC.filter(r => r.parentId === parentId); }
+function getParent(r) {
+  if (!isChild(r)) return null;
+  return REC.find(x => x.id === r.parentId);
+}
+// Recursively gather all tasks for a parent + its children
+function aggregateTasks(parent) {
+  const out = [...(parent.tasks || [])];
+  getChildren(parent.id).forEach(child => {
+    (child.tasks||[]).forEach(t => out.push({...t, _from: child.company, _childId: child.id}));
+  });
+  return out;
+}
+
+// ── Recurrence system ──────────────────────────────────────────────────────
+// Stored on the task as: t.recurrence = {unit:'days'|'weeks'|'months', count:N}
+// When a recurring task is checked complete, the original is kept (for history)
+// and a NEW open task with same title/recurrence is created with a due date
+// equal to (completion date) + (interval).
+function recurrenceLabel(rec) {
+  if (!rec || !rec.unit || !rec.count) return '';
+  const c = parseInt(rec.count);
+  if (!c || c < 1) return '';
+  const u = rec.unit;
+  const single = u==='days'?'day':u==='weeks'?'week':'month';
+  const plural = u==='days'?'days':u==='weeks'?'weeks':'months';
+  return c === 1 ? `every ${single}` : `every ${c} ${plural}`;
+}
+function recurrenceShort(rec) {
+  if (!rec || !rec.unit || !rec.count) return '';
+  const c = parseInt(rec.count);
+  if (!c || c < 1) return '';
+  return c + (rec.unit==='days'?'d':rec.unit==='weeks'?'w':'m');
+}
+// Compute next due date as a YYYY-MM-DD string given a base date (ISO or Date)
+// and a recurrence config. Returns '' if config invalid.
+function nextRecurrenceDate(baseISO, rec) {
+  if (!rec || !rec.unit || !rec.count) return '';
+  const n = parseInt(rec.count); if (!n || n < 1) return '';
+  const base = baseISO ? new Date(baseISO + 'T00:00:00') : new Date();
+  base.setHours(0,0,0,0);
+  if (rec.unit === 'days')   base.setDate(base.getDate() + n);
+  if (rec.unit === 'weeks')  base.setDate(base.getDate() + n * 7);
+  if (rec.unit === 'months') base.setMonth(base.getMonth() + n);
+  return base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0')+'-'+String(base.getDate()).padStart(2,'0');
+}
+
+// ── Edit Recurrence dialog (works for both customer + project tasks) ──────
+// Opens a small modal-style prompt to set/clear recurrence on a task.
+// kind = 'customer' | 'project'
+function editTaskRecurrence(kind, ownerId, taskId) {
+  const owner = kind === 'customer'
+    ? REC.find(x => x.id === ownerId)
+    : PRJ.find(x => x.id === String(ownerId));
+  if (!owner) return;
+  const t = (owner.tasks||[]).find(x => x.id === taskId);
+  if (!t) return;
+
+  const cur = t.recurrence || {};
+  const curUnit  = cur.unit  || '';
+  const curCount = cur.count || '';
+
+  // Build a small overlay using the existing modal infrastructure.
+  // Save the current modal HTML so we can restore after.
+  const saveHTML = $('m-main').innerHTML;
+
+  $('m-main').innerHTML = `
+    <div class="mh">🔁 Edit Recurrence</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5">
+      Set how often this task should repeat. When you check it complete,
+      a new open copy is created automatically due
+      <strong>(completion date + interval)</strong> later.
+    </div>
+    <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 12px;font-size:12px;margin-bottom:14px">
+      <strong>Task:</strong> ${escHtml(t.title)}
+    </div>
+    <div class="fr">
+      <div><label>Repeat every</label>
+        <input id="rec-count" type="number" min="1" max="99" value="${curCount||''}" placeholder="e.g. 5">
+      </div>
+      <div><label>Unit</label>
+        <select id="rec-unit">
+          <option value="">— None (no repeat) —</option>
+          <option value="days"   ${curUnit==='days'?'selected':''}>Day(s)</option>
+          <option value="weeks"  ${curUnit==='weeks'?'selected':''}>Week(s)</option>
+          <option value="months" ${curUnit==='months'?'selected':''}>Month(s)</option>
+        </select>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5">
+      Leave blank or set unit to "None" to remove the recurrence.
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeRecurrenceDialog('${kind}','${ownerId}')">Cancel</button>
+      <button class="btn danger" onclick="clearRecurrence('${kind}','${ownerId}','${taskId}')">Remove Repeat</button>
+      <button class="btn pri" onclick="saveRecurrence('${kind}','${ownerId}','${taskId}')">Save</button>
+    </div>`;
+  // Stash the previous content so we can restore it
+  $('m-main').dataset.prevHtml = saveHTML;
+  $('m-main').dataset.prevKind = kind;
+  $('m-main').dataset.prevId   = ownerId;
+}
+
+function closeRecurrenceDialog(kind, ownerId) {
+  // Restore the original detail view
+  if (kind === 'customer') openDetail(parseInt(ownerId));
+  else openProjectDetail(String(ownerId));
+}
+
+function saveRecurrence(kind, ownerId, taskId) {
+  const owner = kind === 'customer'
+    ? REC.find(x => x.id === parseInt(ownerId))
+    : PRJ.find(x => x.id === String(ownerId));
+  if (!owner) return;
+  const t = (owner.tasks||[]).find(x => x.id === taskId);
+  if (!t) return;
+  const unit  = ($('rec-unit')?.value || '').trim();
+  const count = parseInt($('rec-count')?.value || '0');
+  if (!unit || !count || count < 1) {
+    delete t.recurrence;
+  } else {
+    t.recurrence = {unit, count};
+  }
+  save();
+  closeRecurrenceDialog(kind, ownerId);
+  render();
+}
+
+function clearRecurrence(kind, ownerId, taskId) {
+  const owner = kind === 'customer'
+    ? REC.find(x => x.id === parseInt(ownerId))
+    : PRJ.find(x => x.id === String(ownerId));
+  if (!owner) return;
+  const t = (owner.tasks||[]).find(x => x.id === taskId);
+  if (t) { delete t.recurrence; save(); }
+  closeRecurrenceDialog(kind, ownerId);
+  render();
+}
+
+// ── Project helpers ────────────────────────────────────────────────────────
+function pjid() { return 'pj' + (PJID++); }
+function openProjects() { return PRJ.filter(p => p.status !== 'Complete'); }
+function projectOpenTasks(p) { return (p.tasks || []).filter(t => !t.done); }
+function projectCompletedTasks(p) { return (p.tasks || []).filter(t => t.done); }
+
+// ── Unified task collector — pulls from BOTH customer records AND projects
+//    Returns {ref, refType: 'customer'|'project', t}
+//    refType lets renderers display the right context (company vs project name)
+function allOpenTasks() {
+  const items = [];
+  REC.forEach(r => openTasks(r).forEach(t => items.push({ref:r, refType:'customer', t})));
+  PRJ.forEach(p => projectOpenTasks(p).forEach(t => items.push({ref:p, refType:'project', t})));
+  return items;
+}
+function allCompletedTasks() {
+  const items = [];
+  REC.forEach(r => (r.tasks||[]).filter(t=>t.done).forEach(t => items.push({ref:r, refType:'customer', t})));
+  PRJ.forEach(p => projectCompletedTasks(p).forEach(t => items.push({ref:p, refType:'project', t})));
+  return items;
+}
+
 // ── Seed data ──────────────────────────────────────────────────────────────
 function seed() {
   REC = [
@@ -628,10 +1217,16 @@ function seed() {
 function setView(el) {
   activeView = el.dataset.v;
   document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('on')); el.classList.add('on');
-  ['cards','kanban','table','tasks'].forEach(v => $('v-'+v).style.display = activeView===v ? 'block' : 'none');
-  const hide = activeView === 'kanban' || activeView === 'tasks';
-  $('ftabs').style.display = hide ? 'none' : '';
-  $('main-tbar').style.display = activeView === 'tasks' ? 'none' : '';
+  ['myday','projects','cards','kanban','table','tasks'].forEach(v => {
+    const node = $('v-'+v);
+    if (node) node.style.display = activeView===v ? 'block' : 'none';
+  });
+  // Filter tabs only relevant in customer-record views
+  const showFtabs = activeView === 'cards' || activeView === 'table';
+  $('ftabs').style.display = showFtabs ? '' : 'none';
+  // Main toolbar (search + stage filter) only in customer-record views
+  const showTbar = activeView === 'cards' || activeView === 'kanban' || activeView === 'table';
+  $('main-tbar').style.display = showTbar ? '' : 'none';
   render();
 }
 function setTab(el) {
@@ -649,10 +1244,12 @@ function quickFilter(tab) {
 
 // ── Filtering ──────────────────────────────────────────────────────────────
 function filtered() {
-  const q = ($('srch') || {value:''}).value.toLowerCase();
-  const sf = ($('sf') || {value:''}).value;
-  const pf = ($('pf') || {value:''}).value;
+  const q  = ($('srch') || {value:''}).value.toLowerCase();
+  const sf = ($('sf')   || {value:''}).value;
+  const pf = ($('pf')   || {value:''}).value;
+  const hideChildren = $('hide-children')?.checked || false;
   return REC.filter(r => {
+    if (hideChildren && isChild(r)) return false;
     if (activeTab === 'prospect' && r.type !== 'prospect') return false;
     if (activeTab === 'account'  && r.type !== 'account')  return false;
     if (activeTab === 'request'  && !(r.type === 'account' && r.stage === 'New Request')) return false;
@@ -663,7 +1260,7 @@ function filtered() {
     }
     if (sf && r.stage !== sf) return false;
     if (pf && r.priority !== pf) return false;
-    if (q && !`${r.company} ${r.name||''} ${r.need||''} ${(r.tasks||[]).map(t=>t.title).join(' ')} ${r.holdReason||''}`.toLowerCase().includes(q)) return false;
+    if (q && !`${r.company} ${r.name||''} ${r.need||''} ${r.accountNumber||''} ${r.chainNumber||''} ${(r.tasks||[]).map(t=>t.title).join(' ')} ${r.holdReason||''}`.toLowerCase().includes(q)) return false;
     return true;
   });
 }
@@ -677,6 +1274,7 @@ function renderStats() {
   const over = REC.filter(r => openTasks(r).some(t => dStat(t.due) === 'over')).length;
   const due  = REC.filter(r => openTasks(r).some(t => { const s = dStat(t.due); return s === 'soon' || s === 'over'; })).length;
   const inst = REC.filter(r => { if (!r.installDate) return false; const x = dDiff(r.installDate); return x !== null && x >= 0 && x <= 30; }).length;
+  const prjOpen = openProjects().length;
   $('stats-bar').innerHTML = `
     <div class="stat" onclick="quickFilter('prospect')"><div class="sn">${p}</div><div class="sl">Prospects</div></div>
     <div class="stat" onclick="quickFilter('account')"><div class="sn">${a}</div><div class="sl">My Accounts</div></div>
@@ -684,14 +1282,21 @@ function renderStats() {
     <div class="stat" onclick="quickFilter('hold')"><div class="sn">${h}</div><div class="sl">On Hold</div></div>
     <div class="stat" onclick="quickFilter('due')"><div class="sn" style="color:${over>0?'var(--red)':'inherit'}">${due}</div><div class="sl">Due Soon</div></div>
     <div class="stat" style="cursor:default"><div class="sn" style="color:${inst>0?'var(--amb)':'inherit'}">${inst}</div><div class="sl">Installs ≤30d</div></div>
-    <div class="stat" style="cursor:default"><div class="sn">${REC.length}</div><div class="sl">Total</div></div>`;
+    <div class="stat" onclick="goToProjects()"><div class="sn" style="color:${prjOpen>0?'#5C7BBF':'inherit'}">${prjOpen}</div><div class="sl">Projects</div></div>
+    <div class="stat" style="cursor:default"><div class="sn">${REC.length}</div><div class="sl">Total Records</div></div>`;
+}
+function goToProjects() {
+  const btn = document.querySelector('[data-v="projects"]');
+  if (btn) setView(btn);
 }
 
 function render() {
   renderStats();
-  if (activeView === 'cards')  renderCards();
-  else if (activeView === 'kanban') renderKanban();
-  else if (activeView === 'table')  renderTable();
+  if      (activeView === 'myday')    renderMyDay();
+  else if (activeView === 'projects') renderProjects();
+  else if (activeView === 'cards')    renderCards();
+  else if (activeView === 'kanban')   renderKanban();
+  else if (activeView === 'table')    renderTable();
   else renderTasks();
 }
 
@@ -708,17 +1313,24 @@ function cardHTML(r) {
   const ot  = openTasks(r).length;
   const iDiff = dDiff(r.installDate);
   const iCls  = r.installDate && iDiff !== null ? (iDiff < 0 ? 'due-over' : iDiff <= 7 ? 'due-soon' : 'due-ok') : '';
-  return `<div class="card ${isA?'is-acc':'is-pro'}" onclick="openDetail(${r.id})">
+  const parent = getParent(r);
+  const isP = isParent(r);
+  const childCount = isP ? getChildren(r.id).length : 0;
+  // Card class: parent overrides child if both
+  const extraClass = isP ? 'is-parent' : (isChild(r) ? 'is-child' : (isA?'is-acc':'is-pro'));
+  return `<div class="card ${extraClass}" onclick="openDetail(${r.id})">
     <div class="c-top">
-      <div>
+      <div style="flex:1;min-width:0">
         <div class="c-name">${r.company}</div>
-        ${r.name ? `<div class="c-sub">${r.name}</div>` : ''}
+        ${parent ? `<div class="parent-link" onclick="event.stopPropagation();openDetail(${parent.id})">⛓ ${parent.company}</div>` : ''}
+        ${r.name && !parent ? `<div class="c-sub">${r.name}</div>` : ''}
       </div>
       <div class="c-badges">
         <span class="bdg ${scls(r.stage)}">${r.stage}</span>
-        <span class="${isA?'b-acc':'b-pro'}">${isA?'Account':'Prospect'}</span>
+        ${isP ? `<span class="b-parent">⛓ Chain (${childCount})</span>` : (isChild(r) ? `<span class="b-child">↳ Location</span>` : `<span class="${isA?'b-acc':'b-pro'}">${isA?'Account':'Prospect'}</span>`)}
       </div>
     </div>
+    ${(r.accountNumber || r.chainNumber) ? `<div class="c-row" style="font-size:11px"><span class="c-lbl">${r.chainNumber?'Chain #':'Acct #'}</span><span class="c-val" style="font-family:var(--mono);font-size:11px">${r.chainNumber || r.accountNumber}</span></div>` : ''}
     ${r.value ? `<div class="c-row"><span class="c-lbl">Value</span><span class="c-val" style="font-weight:600">${r.value}</span></div>` : ''}
     ${r.need  ? `<div class="c-row"><span class="c-lbl">Need</span><span class="c-val">${r.need.length>80?r.need.substring(0,80)+'…':r.need}</span></div>` : ''}
     ${r.stage === 'On Hold' && r.holdReason ? `<div class="hold-box"><strong>Hold:</strong> ${r.holdReason.length>65?r.holdReason.substring(0,65)+'…':r.holdReason}</div>` : ''}
@@ -755,8 +1367,11 @@ function renderKanban() {
         const dCls = st && st.due ? dpCls(st.due) : '';
         const iDiff = dDiff(r.installDate);
         const iCls = r.installDate && iDiff !== null ? (iDiff < 0 ? 'due-over' : iDiff <= 7 ? 'due-soon' : 'due-ok') : '';
-        return `<div class="kb-card ${isA?'is-acc':'is-pro'}" onclick="openDetail(${r.id})">
-          <div class="kb-name">${r.company}</div>
+        const isP = isParent(r);
+        const cls = isP ? 'is-parent' : (isChild(r) ? 'is-child' : (isA?'is-acc':'is-pro'));
+        const childCount = isP ? getChildren(r.id).length : 0;
+        return `<div class="kb-card ${cls}" onclick="openDetail(${r.id})">
+          <div class="kb-name">${r.company}${isP?` <span class="b-parent" style="font-size:8px">⛓ ${childCount}</span>`:isChild(r)?` <span class="b-child" style="font-size:8px">↳</span>`:''}</div>
           ${r.value ? `<div class="kb-val">${r.value}</div>` : ''}
           ${st ? `<div class="kb-next">${st.title.length>60?st.title.substring(0,60)+'…':st.title}</div>` : ''}
           <div class="kb-foot">
@@ -849,6 +1464,193 @@ function renderTable() {
 function tSort(col) { if (tblSort===col) tblDir*=-1; else {tblSort=col;tblDir=1;} renderTable(); }
 function toggleExp(id) { expandedRow = expandedRow===id ? null : id; renderTable(); }
 
+// ── My Day View ────────────────────────────────────────────────────────────
+function renderMyDay() {
+  const items = allOpenTasks();
+  // EXCLUDE P3 from active lists per the requirement; P3 has its own section
+  const active = items.filter(({t}) => taskPriority(t) !== 'P3');
+
+  // Categorize the active items
+  const overdue = active.filter(({t}) => t.due && dDiff(t.due) < 0)
+    .sort((a,b) => dDiff(a.t.due) - dDiff(b.t.due));
+  const todayItems = active.filter(({t}) => t.due && dDiff(t.due) === 0);
+  const tomorrow = active.filter(({t}) => t.due && dDiff(t.due) === 1);
+  // This week = days 2-7 (today and tomorrow excluded; overdue excluded)
+  const thisWeek = active.filter(({t}) => {
+    const d = dDiff(t.due);
+    return d !== null && d >= 2 && d <= 7;
+  }).sort((a,b) => dDiff(a.t.due) - dDiff(b.t.due));
+  // P3 / Parking Lot
+  const parkingLot = items.filter(({t}) => taskPriority(t) === 'P3')
+    .sort((a,b) => {
+      const da = dDiff(a.t.due), db = dDiff(b.t.due);
+      if (da !== null && db !== null) return da - db;
+      return da !== null ? -1 : db !== null ? 1 : 0;
+    });
+
+  const today = new Date();
+  const dayStr = today.toLocaleDateString('en-US',
+    {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+  function rowHTML({ref, refType, t}) {
+    const p = taskPriority(t);
+    const pCls = priorityClass(p);
+    const ctx = refType === 'customer'
+      ? `${ref.company}` + (ref.type==='account'?' · Account':' · Prospect')
+      : `${ref.title || 'Project'} · 🗂 Project`;
+    const dueLbl = t.due ? dLbl(t.due) || fDate(t.due) : '';
+    const id = refType === 'customer' ? ref.id : "'"+ref.id+"'";
+    const open = refType === 'customer' ? `openDetail(${ref.id})` : `openProjectDetail('${ref.id}')`;
+    const toggle = refType === 'customer' ? `toggleTask(${ref.id},'${t.id}')` : `toggleProjectTask('${ref.id}','${t.id}')`;
+    return `<div class="md-row" onclick="${open}">
+      <input type="checkbox" class="md-cb" ${t.done?'checked':''}
+        onclick="event.stopPropagation();${toggle}">
+      <div class="md-task">${t.title}<div class="md-co">${ctx}</div></div>
+      ${dueLbl ? `<span class="dpill ${dpCls(t.due)}">${dueLbl}</span>` : ''}
+      <span class="ppill ${pCls}">${priorityShort(p)}</span>
+    </div>`;
+  }
+
+  function section(dotColor, title, items, emptyMsg) {
+    return `<div class="md-section">
+      <div class="md-shdr">
+        <div class="md-sdot" style="background:${dotColor}"></div>
+        <span class="md-stitle" style="color:${dotColor}">${title}</span>
+        <span class="md-scnt">${items.length}</span>
+      </div>
+      ${items.length ? items.map(rowHTML).join('') : `<div class="md-empty">${emptyMsg}</div>`}
+    </div>`;
+  }
+
+  $('myday-content').innerHTML = `
+    <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:18px;font-weight:600;letter-spacing:-.3px;color:var(--navy)">${dayStr}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px">Your day at a glance</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text2)">
+        <span class="ppill p1">P1</span> Urgent &nbsp;
+        <span class="ppill p2">P2</span> Do Soon &nbsp;
+        <span class="ppill p3">P3</span> Parking Lot
+      </div>
+    </div>
+    ${section('#B83030', '🔴 Overdue', overdue, 'Nothing overdue — well done!')}
+    ${section('#9A6B00', '⭐ Due Today', todayItems, 'Nothing scheduled for today')}
+    <div class="md-grid">
+      ${section('#1B2A4A', '🔜 Due Tomorrow', tomorrow, 'Nothing due tomorrow')}
+      ${section('#1A7A52', '📅 Rest of This Week', thisWeek, 'Nothing else this week')}
+    </div>
+    ${section('#5C5246', '🅿️ Parking Lot — P3', parkingLot, 'No Parking Lot items')}
+  `;
+}
+
+// ── Projects View ──────────────────────────────────────────────────────────
+function renderProjects() {
+  // Refresh category dropdown
+  const catSel = $('prj-cat');
+  if (catSel) {
+    const current = catSel.value;
+    catSel.innerHTML = '<option value="">All categories</option>'
+      + PROJECT_CATEGORIES.map(c => `<option ${current===c?'selected':''}>${c}</option>`).join('');
+  }
+
+  const statusF = $('prj-status')?.value || 'all';
+  const catF    = $('prj-cat')?.value || '';
+  const priF    = $('prj-pri')?.value || '';
+  const q       = ($('prj-search')?.value || '').toLowerCase();
+
+  let list = PRJ.filter(p => {
+    if (statusF === 'active' && p.status === 'Complete') return false;
+    if (statusF !== 'all' && statusF !== 'active' && p.status !== statusF) return false;
+    if (catF && p.category !== catF) return false;
+    if (priF) {
+      // Project priority is the soonest open task's priority, OR the project's manual priority
+      const pPri = projectPriority(p);
+      if (priF === 'None' ? pPri !== 'None' : pPri !== priF) return false;
+    }
+    if (q) {
+      const hay = `${p.title} ${p.description||''} ${p.notes||''} ${p.category||''} ${(p.tasks||[]).map(t=>t.title).join(' ')}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Sort: Active first, then by next-due, then complete at end
+  list.sort((a,b) => {
+    if ((a.status==='Complete') !== (b.status==='Complete')) return a.status==='Complete' ? 1 : -1;
+    const at = projectNextDue(a), bt = projectNextDue(b);
+    if (at && bt) return at.localeCompare(bt);
+    if (at) return -1; if (bt) return 1;
+    return a.title.localeCompare(b.title);
+  });
+
+  if (!list.length) {
+    $('projects-content').innerHTML = '<div class="empty-msg">No projects match your filters.</div>';
+    return;
+  }
+
+  $('projects-content').innerHTML = '<div class="cards-grid">' +
+    list.map(projectCardHTML).join('') + '</div>';
+}
+
+function projectPriority(p) {
+  if (p.priorityOverride && ['P1','P2','P3','None'].includes(p.priorityOverride)) return p.priorityOverride;
+  // Compute from soonest open task
+  const tasks = projectOpenTasks(p);
+  if (!tasks.length) return p.dueDate ? autoPriority({due:p.dueDate}) : 'None';
+  // Use most-urgent of any open task or the project itself
+  const candidates = tasks.map(autoPriority);
+  if (p.dueDate) candidates.push(autoPriority({due:p.dueDate}));
+  if (candidates.includes('P1')) return 'P1';
+  if (candidates.includes('P2')) return 'P2';
+  if (candidates.includes('P3')) return 'P3';
+  return 'None';
+}
+
+function projectNextDue(p) {
+  const dates = [];
+  if (p.dueDate) dates.push(p.dueDate);
+  projectOpenTasks(p).forEach(t => { if (t.due) dates.push(t.due); });
+  if (!dates.length) return null;
+  dates.sort();
+  return dates[0];
+}
+
+function projectCardHTML(p) {
+  const stCls = p.status === 'Complete' ? 'st-co' : p.status === 'In Progress' ? 'st-ip' : 'st-ns';
+  const pri = projectPriority(p);
+  const pCls = priorityClass(pri);
+  const open = projectOpenTasks(p).length;
+  const done = projectCompletedTasks(p).length;
+  const total = open + done;
+  const pct = total ? Math.round((done/total)*100) : 0;
+  const nextDue = projectNextDue(p);
+  const nextLbl = nextDue ? dLbl(nextDue) || fDate(nextDue) : '';
+  const nextCls = nextDue ? dpCls(nextDue) : '';
+  return `<div class="card is-prj" onclick="openProjectDetail('${p.id}')">
+    <div class="c-top">
+      <div>
+        <div class="c-name">${p.title}</div>
+        ${p.category ? `<div class="c-sub">${p.category}</div>` : ''}
+      </div>
+      <div class="c-badges">
+        <span class="${stCls}">${p.status||'Not Started'}</span>
+        <span class="b-prj">Project</span>
+      </div>
+    </div>
+    ${p.description ? `<div class="c-row"><span class="c-val" style="font-size:12px">${p.description.length>110?p.description.substring(0,110)+'…':p.description}</span></div>` : ''}
+    ${total ? `<div class="next-box"><div class="next-row">
+      <span class="next-lbl">Tasks</span>
+      <span class="next-txt">${done} of ${total} complete (${pct}%)</span>
+    </div></div>` : ''}
+    ${nextLbl ? `<div class="inst-row"><span class="inst-lbl">Next:</span>&nbsp;<span class="dpill ${nextCls}">${nextLbl}</span></div>` : ''}
+    <div class="c-foot">
+      <span class="ppill ${pCls}">${priorityShort(pri)}</span>
+      ${open ? `<span style="color:var(--text3)">${open} open task${open>1?'s':''}</span>` : '<span style="color:var(--text3)">No open tasks</span>'}
+    </div>
+  </div>`;
+}
+
 // ── Task List ──────────────────────────────────────────────────────────────
 let taskTab = 'open'; // 'open' | 'completed'
 
@@ -882,74 +1684,121 @@ function renderTasks() {
   const drKey   = $('tk-daterange')?.value || 'all';
   const sortBy  = $('tk-sort')?.value     || 'due';
   const groupBy = $('tk-group')?.value    || 'none';
-  const pOrd    = {High:0,Medium:1,Low:2};
+  const pOrd_old = {High:0,Medium:1,Low:2};
+  const pOrd_new = {P1:0,P2:1,P3:2,None:3};
   const sOrd    = {Prospect:0,Active:1,Proposal:2,'New Request':3,Customer:4,'On Hold':5,Won:6,Lost:7};
   const {start: drStart, end: drEnd} = dateRangeBounds(drKey);
 
+  // Pull from BOTH customer records and projects (unified view)
+  // Each item: {ref, refType:'customer'|'project', t}
+  const allItems = taskTab === 'completed'
+    ? allCompletedTasks()
+    : allOpenTasks();
+
+  // Apply filters
   let items = [];
-  REC.forEach(r => {
-    (r.tasks || []).forEach(t => {
-      if (taskTab === 'completed') {
-        if (!t.done) return;
-        // Date range filter on due date (or doneDate if present, fallback to due)
-        if (drStart) {
-          const d = pDate(t.doneDate || t.due);
-          if (!d || d < drStart || d > drEnd) return;
-        }
-      } else {
-        // Open tasks tab
-        if (t.done) return;
-        if (scope === 'due7')   { const x=dDiff(t.due); if(x===null||x>7||x<0)return; }
-        if (scope === 'due30')  { const x=dDiff(t.due); if(x===null||x>30||x<0)return; }
-        if (scope === 'over')   { if(dStat(t.due)!=='over')return; }
-        if (scope === 'nodate') { if(t.due)return; }
-        if (scope === 'install'){ if(!r.installDate)return; }
+  allItems.forEach(item => {
+    const {ref, refType, t} = item;
+    if (taskTab === 'completed') {
+      if (drStart) {
+        const d = pDate(t.doneDate || t.due);
+        if (!d || d < drStart || d > drEnd) return;
       }
-      items.push({r, t});
-    });
+    } else {
+      // OPEN tab: hide P3 by default unless scope is 'parking'
+      const tp = taskPriority(t);
+      if (scope === 'parking') { if (tp !== 'P3') return; }
+      else                     { if (tp === 'P3') return; }
+
+      if (scope === 'due7')   { const x=dDiff(t.due); if(x===null||x>7||x<0)return; }
+      if (scope === 'due30')  { const x=dDiff(t.due); if(x===null||x>30||x<0)return; }
+      if (scope === 'over')   { if(dStat(t.due)!=='over')return; }
+      if (scope === 'nodate') { if(t.due)return; }
+      if (scope === 'install'){ if(refType!=='customer' || !ref.installDate)return; }
+      if (scope === 'p1')     { if (tp !== 'P1') return; }
+      if (scope === 'p2')     { if (tp !== 'P2') return; }
+    }
+    items.push(item);
   });
 
   items.sort((a,b) => {
-    if (sortBy==='due')      { const da=pDate(a.t.due),db=pDate(b.t.due); if(da&&db)return da-db; return da?-1:db?1:0; }
-    if (sortBy==='install')  { const da=pDate(a.r.installDate),db=pDate(b.r.installDate); if(da&&db)return da-db; return da?-1:db?1:0; }
-    if (sortBy==='company')  return a.r.company.localeCompare(b.r.company);
-    if (sortBy==='priority') return (pOrd[a.r.priority]??9)-(pOrd[b.r.priority]??9);
-    if (sortBy==='stage')    return (sOrd[a.r.stage]??9)-(sOrd[b.r.stage]??9);
+    if (sortBy==='due')        { const da=pDate(a.t.due),db=pDate(b.t.due); if(da&&db)return da-db; return da?-1:db?1:0; }
+    if (sortBy==='priority')   { return (pOrd_new[taskPriority(a.t)]??9)-(pOrd_new[taskPriority(b.t)]??9); }
+    if (sortBy==='install')    {
+      const ai = a.refType==='customer'?a.ref.installDate:'';
+      const bi = b.refType==='customer'?b.ref.installDate:'';
+      const da=pDate(ai),db=pDate(bi); if(da&&db)return da-db; return da?-1:db?1:0;
+    }
+    if (sortBy==='company')    {
+      const an = a.refType==='customer'?a.ref.company:a.ref.title;
+      const bn = b.refType==='customer'?b.ref.company:b.ref.title;
+      return (an||'').localeCompare(bn||'');
+    }
+    if (sortBy==='stage')      {
+      const as = a.refType==='customer'?a.ref.stage:'Project';
+      const bs = b.refType==='customer'?b.ref.stage:'Project';
+      return (sOrd[as]??9)-(sOrd[bs]??9);
+    }
     return 0;
   });
 
   const thead = `<thead><tr>
-    <th>Company</th><th>Stage</th><th>Task</th>
-    <th>Due Date</th><th>Install Date</th><th>Priority</th><th></th>
+    <th>Source</th><th>Stage / Type</th><th>Task</th>
+    <th>Due Date</th><th>Install / Project</th><th>Priority</th><th></th>
   </tr></thead>`;
 
-  function tkRow({r, t}) {
+  function tkRow({ref, refType, t}) {
     const ds   = dStat(t.due);
     const dl   = dLbl(t.due);
     const dCls = ds==='over'?'due-over':ds==='soon'?'due-soon':'due-ok';
-    const iDiff= dDiff(r.installDate);
-    const iDs  = dStat(r.installDate);
-    const iCls = iDs==='over'?'due-over':iDs==='soon'?'due-soon':'due-ok';
     const rowCls = t.done?'':(ds==='over'?'tk-over':ds==='soon'?'tk-soon':'');
-    const isA  = r.type==='account';
-    return `<tr class="${rowCls}" style="${t.done?'opacity:.5':''}" onclick="openDetail(${r.id})">
-      <td><div class="tk-co">${r.company}</div><span class="${isA?'b-acc':'b-pro'} tk-type">${isA?'Account':'Prospect'}</span></td>
-      <td><span class="bdg ${scls(r.stage)}">${r.stage}</span></td>
-      <td><div class="tk-title" style="${t.done?'text-decoration:line-through;color:var(--text3)':''}">${t.title}</div></td>
-      <td>
-        ${dl&&!t.done?`<div class="tk-due-big"><span class="dpill ${dCls}">${dl}</span></div><div class="tk-due-rel">${fDate(t.due)}</div>`
-          :t.due?`<span style="font-size:11px;color:var(--text3)">${fDate(t.due)}</span>`
-          :'<span style="color:var(--text3);font-size:12px">—</span>'}
-      </td>
-      <td>
-        ${r.installDate?`<div><span class="dpill ${iCls}" style="font-size:11px">${fDate(r.installDate)}</span></div>${iDiff!==null?`<div class="tk-due-rel">${iDiff<0?'Overdue':iDiff===0?'Today':iDiff+'d away'}</div>`:''}`
-          :'<span style="color:var(--text3);font-size:12px">—</span>'}
-      </td>
-      <td><span class="${pcls(r.priority)}">${r.priority}</span></td>
-      <td onclick="event.stopPropagation()">
-        <button class="tsbtn" onclick="toggleTask(${r.id},'${t.id}')">${t.done?'Reopen':'✓ Done'}</button>
-      </td>
-    </tr>`;
+    const tp = taskPriority(t);
+    const pCls = priorityClass(tp);
+
+    if (refType === 'customer') {
+      const r = ref;
+      const iDiff= dDiff(r.installDate);
+      const iDs  = dStat(r.installDate);
+      const iCls = iDs==='over'?'due-over':iDs==='soon'?'due-soon':'due-ok';
+      const isA  = r.type==='account';
+      return `<tr class="${rowCls}" style="${t.done?'opacity:.5':''}" onclick="openDetail(${r.id})">
+        <td><div class="tk-co">${r.company}</div><span class="${isA?'b-acc':'b-pro'} tk-type">${isA?'Account':'Prospect'}</span></td>
+        <td><span class="bdg ${scls(r.stage)}">${r.stage}</span></td>
+        <td><div class="tk-title" style="${t.done?'text-decoration:line-through;color:var(--text3)':''}">${t.title}</div></td>
+        <td>
+          ${dl&&!t.done?`<div class="tk-due-big"><span class="dpill ${dCls}">${dl}</span></div><div class="tk-due-rel">${fDate(t.due)}</div>`
+            :t.due?`<span style="font-size:11px;color:var(--text3)">${fDate(t.due)}</span>`
+            :'<span style="color:var(--text3);font-size:12px">—</span>'}
+        </td>
+        <td>
+          ${r.installDate?`<div><span class="dpill ${iCls}" style="font-size:11px">${fDate(r.installDate)}</span></div>${iDiff!==null?`<div class="tk-due-rel">${iDiff<0?'Overdue':iDiff===0?'Today':iDiff+'d away'}</div>`:''}`
+            :'<span style="color:var(--text3);font-size:12px">—</span>'}
+        </td>
+        <td><span class="ppill ${pCls}">${priorityShort(tp)}</span></td>
+        <td onclick="event.stopPropagation()">
+          <button class="tsbtn" onclick="toggleTask(${r.id},'${t.id}')">${t.done?'Reopen':'✓ Done'}</button>
+        </td>
+      </tr>`;
+    } else {
+      // Project task
+      const p = ref;
+      const stCls = p.status === 'Complete' ? 'st-co' : p.status === 'In Progress' ? 'st-ip' : 'st-ns';
+      return `<tr class="${rowCls}" style="${t.done?'opacity:.5':''}" onclick="openProjectDetail('${p.id}')">
+        <td><div class="tk-co">${p.title}</div><span class="b-prj tk-type">🗂 Project${p.category?' · '+p.category:''}</span></td>
+        <td><span class="${stCls}">${p.status||'Not Started'}</span></td>
+        <td><div class="tk-title" style="${t.done?'text-decoration:line-through;color:var(--text3)':''}">${t.title}</div></td>
+        <td>
+          ${dl&&!t.done?`<div class="tk-due-big"><span class="dpill ${dCls}">${dl}</span></div><div class="tk-due-rel">${fDate(t.due)}</div>`
+            :t.due?`<span style="font-size:11px;color:var(--text3)">${fDate(t.due)}</span>`
+            :'<span style="color:var(--text3);font-size:12px">—</span>'}
+        </td>
+        <td><span style="font-size:11px;color:var(--text2)">Project task</span></td>
+        <td><span class="ppill ${pCls}">${priorityShort(tp)}</span></td>
+        <td onclick="event.stopPropagation()">
+          <button class="tsbtn" onclick="toggleProjectTask('${p.id}','${t.id}')">${t.done?'Reopen':'✓ Done'}</button>
+        </td>
+      </tr>`;
+    }
   }
 
   let tbody = '<tbody>';
@@ -960,9 +1809,11 @@ function renderTasks() {
   } else {
     const gf = {
       urgency:  ({t}) => { const ds=dStat(t.due); return ds==='over'?'🔴 Overdue':ds==='soon'?'🟡 Due Soon':'🟢 Upcoming'; },
-      stage:    ({r}) => r.stage,
-      priority: ({r}) => r.priority + ' Priority',
-      type:     ({r}) => r.type==='account'?'My Accounts':'Prospects'
+      stage:    ({ref,refType}) => refType==='customer'?ref.stage:'🗂 Project',
+      priority: ({t}) => priorityLabel(taskPriority(t)),
+      type:     ({ref,refType}) => refType==='customer'
+                                   ? (ref.type==='account'?'My Accounts':'Prospects')
+                                   : '🗂 Projects'
     }[groupBy];
     const groups = {};
     items.forEach(item => { const k=gf(item); if(!groups[k])groups[k]=[]; groups[k].push(item); });
@@ -989,17 +1840,61 @@ function openDetail(id) {
   const hasContact = r.name || r.contact || r.phone || r.owner;
   $('m-main').innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-      <div>
+      <div style="flex:1;min-width:0">
         <div style="font-size:18px;font-weight:600;letter-spacing:-.3px">${r.company}</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        ${(()=>{const par=getParent(r);return par?`<div class="parent-link" onclick="openDetail(${par.id})" style="margin-top:3px">⛓ Part of: ${escHtml(par.company)}</div>`:'';})()}
+        <div style="font-size:12px;color:var(--text2);margin-top:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <span class="bdg ${scls(r.stage)}">${r.stage}</span>
-          <span class="${isA?'b-acc':'b-pro'}">${isA?'My Account':'Prospect'}</span>
+          ${isParent(r) ? `<span class="b-parent">⛓ Chain Parent</span>` : (isChild(r) ? `<span class="b-child">↳ Child Location</span>` : `<span class="${isA?'b-acc':'b-pro'}">${isA?'My Account':'Prospect'}</span>`)}
           <span class="${pcls(r.priority)}">${r.priority} priority</span>
           ${r.value?`<span style="font-weight:600">${r.value}</span>`:''}
+          ${r.accountNumber?`<span style="font-size:11px;color:var(--text2);font-family:var(--mono)">Acct # ${escHtml(r.accountNumber)}</span>`:''}
+          ${r.chainNumber?`<span style="font-size:11px;color:var(--text2);font-family:var(--mono)">Chain # ${escHtml(r.chainNumber)}</span>`:''}
         </div>
       </div>
       <button class="btn" onclick="closeModal('ov-main')">✕</button>
     </div>
+    ${(()=>{
+      // If this record is a parent, render a Children section + aggregate stats
+      if (!isParent(r)) return '';
+      const kids = getChildren(r.id);
+      const allTasks = aggregateTasks(r);
+      const openCount = allTasks.filter(t => !t.done).length;
+      const doneCount = allTasks.filter(t => t.done).length;
+      const overdueCount = allTasks.filter(t => !t.done && t.due && dDiff(t.due) < 0).length;
+      const dueWeekCount = allTasks.filter(t => !t.done && t.due && dDiff(t.due) >= 0 && dDiff(t.due) <= 7).length;
+      return `<div class="children-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.04em">⛓ Chain Locations (${kids.length})</div>
+          <button class="btn" style="height:26px;font-size:11px" onclick="openAddChild(${r.id})">+ Add Location</button>
+        </div>
+        <div class="aggregate-grid">
+          <div class="agg-card"><div class="agg-n">${kids.length}</div><div class="agg-l">Locations</div></div>
+          <div class="agg-card"><div class="agg-n">${openCount}</div><div class="agg-l">Open Tasks (Total)</div></div>
+          <div class="agg-card"><div class="agg-n" style="color:${overdueCount?'var(--red)':'inherit'}">${overdueCount}</div><div class="agg-l">Overdue</div></div>
+          <div class="agg-card"><div class="agg-n" style="color:${dueWeekCount?'var(--amb)':'inherit'}">${dueWeekCount}</div><div class="agg-l">Due ≤7d</div></div>
+          <div class="agg-card"><div class="agg-n" style="color:var(--grn)">${doneCount}</div><div class="agg-l">Completed</div></div>
+        </div>
+        ${kids.length ? kids.map(c => {
+          const cot = openTasks(c).length;
+          const cover = (c.tasks||[]).filter(t => !t.done && t.due && dDiff(t.due) < 0).length;
+          return `<div class="child-row" onclick="event.stopPropagation();openDetail(${c.id})">
+            <div style="flex:1;min-width:0">
+              <div class="child-co">${escHtml(c.company)}</div>
+              <div class="child-meta">
+                <span class="bdg ${scls(c.stage)}" style="font-size:9px">${c.stage}</span>
+                ${c.accountNumber?` · <span style="font-family:var(--mono)">Acct # ${escHtml(c.accountNumber)}</span>`:''}
+                ${c.installDate?' · Install: '+fDate(c.installDate):''}
+              </div>
+            </div>
+            <div class="child-stats">
+              ${cover ? `<span style="color:var(--red);font-weight:600">${cover} overdue</span>` : ''}
+              <span style="color:var(--text3)">${cot} open</span>
+            </div>
+          </div>`;
+        }).join('') : '<div style="font-size:12px;color:var(--text3);font-style:italic;padding:8px 4px">No child locations yet. Click "+ Add Location" above.</div>'}
+      </div>`;
+    })()}
     ${r.need?`<div class="dbox" style="margin-bottom:10px"><div class="dl">Need / Request</div><div style="font-size:13px;line-height:1.6;margin-top:3px">${r.need}</div></div>`:''}
     ${r.type==='prospect'&&r.prospectStep?`<div class="dbox gold" style="margin-bottom:10px"><div class="dl">Prospect Step</div><div style="font-size:13px;line-height:1.6;margin-top:3px;font-weight:600">${r.prospectStep}</div></div>`:''}
     ${r.stage==='On Hold'&&r.holdReason?`<div class="dbox hold" style="margin-bottom:10px"><div class="dl">Hold reason</div><div style="font-size:13px;line-height:1.6;margin-top:3px">${r.holdReason}</div></div>`:''}
@@ -1028,9 +1923,16 @@ function openDetail(id) {
         ${(r.tasks||[]).map(t => taskItemHTML(r.id, t)).join('')}
         ${!(r.tasks||[]).length?'<div style="font-size:12px;color:var(--text3);padding:6px 0">No tasks yet. Add one below.</div>':''}
       </div>
-      <div class="add-task" style="margin-top:8px">
-        <input type="text" id="nt-title-${r.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask(${r.id})">
+      <div class="add-task" style="margin-top:8px;flex-wrap:wrap">
+        <input type="text" id="nt-title-${r.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTask(${r.id})" style="flex:1;min-width:140px">
         <input type="date" id="nt-due-${r.id}" title="Due date (optional)">
+        <input type="number" id="nt-rec-count-${r.id}" min="1" max="99" placeholder="#" style="width:48px;height:30px;font-size:12px;padding:0 6px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font);outline:none" title="Repeat every N units (optional)">
+        <select id="nt-rec-unit-${r.id}" style="height:30px;font-size:12px;padding:0 6px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font);outline:none" title="Recurrence unit">
+          <option value="">No repeat</option>
+          <option value="days">Day(s)</option>
+          <option value="weeks">Week(s)</option>
+          <option value="months">Month(s)</option>
+        </select>
         <button class="abtn" onclick="addTask(${r.id})">+ Add task</button>
       </div>
     </div>
@@ -1042,20 +1944,74 @@ function openDetail(id) {
   showOverlay('ov-main');
 }
 function taskItemHTML(recId, t) {
+  const tp = taskPriority(t);
+  const pCls = priorityClass(tp);
   const dp = t.due && !t.done ? `<span class="tdp ${dpCls(t.due)}">${dLbl(t.due)||fDate(t.due)}</span>` : (t.due&&t.done?`<span style="font-size:10px;color:var(--text3)">${fDate(t.due)}</span>`:'');
+  const isOverride = t.priorityOverride ? '★' : '';
+  const recLbl = recurrenceLabel(t.recurrence);
+  const recBadge = recLbl
+    ? `<span style="font-size:10px;font-weight:600;color:#5C7BBF;background:#E8EDF5;border:1px solid #B0C0E0;padding:1px 7px;border-radius:20px;cursor:pointer;white-space:nowrap" onclick="event.stopPropagation();editTaskRecurrence('customer',${recId},'${t.id}')" title="${recLbl} — click to edit">🔁 ${recurrenceShort(t.recurrence)}</span>`
+    : `<span style="font-size:10px;color:var(--text3);cursor:pointer;border:1px dashed var(--bdr);padding:1px 6px;border-radius:20px" onclick="event.stopPropagation();editTaskRecurrence('customer',${recId},'${t.id}')" title="Set recurrence">🔁</span>`;
   return `<div class="titem${t.done?' done':''}" id="ti-${t.id}" data-done="${t.done}">
     <input type="checkbox" ${t.done?'checked':''} onclick="toggleTask(${recId},'${t.id}')">
     <span class="tt">${t.title}</span>
+    <span class="ppill ${pCls}" style="font-size:9px;cursor:pointer" onclick="event.stopPropagation();editTaskPriority(${recId},'${t.id}')" title="Click to override priority${isOverride?' (manual override active)':''}">${priorityShort(tp)}${isOverride?' '+isOverride:''}</span>
+    ${recBadge}
     ${dp}
     <button class="tdel" onclick="deleteTask(${recId},'${t.id}')" title="Remove">×</button>
   </div>`;
 }
+
+// Manual priority override on a task — works for both customer and project tasks
+function editTaskPriority(recId, taskId) {
+  // Try customer first
+  let owner = REC.find(x => x.id === recId);
+  let isProject = false;
+  if (!owner) {
+    owner = PRJ.find(x => x.id === String(recId));
+    isProject = true;
+  }
+  if (!owner) return;
+  const t = (owner.tasks||[]).find(x => x.id === taskId);
+  if (!t) return;
+
+  const current = t.priorityOverride || '';
+  const choice = prompt(
+    'Set manual priority override (P1, P2, P3, None) — or leave blank for AUTO based on due date.\n\n' +
+    'Current: ' + (current || 'AUTO ('+autoPriority(t)+')'),
+    current
+  );
+  if (choice === null) return; // cancelled
+  const c = choice.trim().toUpperCase();
+  if (c === '' || c === 'AUTO') {
+    delete t.priorityOverride;
+  } else if (['P1','P2','P3','NONE'].includes(c)) {
+    t.priorityOverride = c === 'NONE' ? 'None' : c;
+  } else {
+    alert('Invalid choice. Use P1, P2, P3, None, or leave blank.');
+    return;
+  }
+  save();
+  if (isProject) {
+    if ($('ov-main').classList.contains('show')) openProjectDetail(owner.id);
+  } else {
+    if ($('ov-main').classList.contains('show')) openDetail(owner.id);
+  }
+  render();
+}
 function addTask(recId) {
   const ti = $('nt-title-'+recId), di = $('nt-due-'+recId);
+  const ru = $('nt-rec-unit-'+recId), rc = $('nt-rec-count-'+recId);
   const title = ti ? ti.value.trim() : ''; if (!title) return;
   const r = REC.find(x => x.id === recId); if (!r) return;
   if (!r.tasks) r.tasks = [];
-  r.tasks.push({id: tid(), title, due: di ? di.value || '' : '', done: false});
+  const newTask = {id: tid(), title, due: di ? di.value || '' : '', done: false};
+  const unit  = ru ? ru.value.trim() : '';
+  const count = rc ? parseInt(rc.value || '0') : 0;
+  if (unit && count && count >= 1) {
+    newTask.recurrence = {unit, count};
+  }
+  r.tasks.push(newTask);
   save(); openDetail(recId); render();
 }
 function toggleTask(recId, taskId) {
@@ -1063,9 +2019,22 @@ function toggleTask(recId, taskId) {
   const t = (r.tasks||[]).find(x => x.id === taskId); if (!t) return;
   t.done = !t.done;
   if (t.done) {
-    // Record the completion date for date-range filtering on the completed tab
     const now = new Date();
     t.doneDate = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+    // Recurrence: spawn the next occurrence (due = completion + interval)
+    if (t.recurrence && t.recurrence.unit && t.recurrence.count) {
+      const nextDue = nextRecurrenceDate(t.doneDate, t.recurrence);
+      if (nextDue) {
+        r.tasks.push({
+          id: tid(),
+          title: t.title,
+          due: nextDue,
+          done: false,
+          recurrence: {unit: t.recurrence.unit, count: t.recurrence.count},
+          spawnedFrom: t.id
+        });
+      }
+    }
   } else {
     delete t.doneDate;
   }
@@ -1087,16 +2056,58 @@ function toggleShowDone(recId) {
   if (btn) btn.textContent = anyHidden ? 'Hide completed' : 'Show completed';
 }
 function delRec(id) {
+  const r = REC.find(x => x.id === id);
+  if (!r) return;
+  const kids = getChildren(id);
+  if (kids.length > 0) {
+    const choice = prompt(
+      `This is a Chain Parent with ${kids.length} child location${kids.length>1?'s':''}.\n\n` +
+      'Type one of:\n' +
+      '   UNLINK  — delete parent only, children become standalone\n' +
+      '   DELETE  — delete parent AND all children (cannot be undone)\n' +
+      '   CANCEL  — keep everything',
+      'UNLINK'
+    );
+    if (!choice) return;
+    const c = choice.trim().toUpperCase();
+    if (c === 'UNLINK') {
+      kids.forEach(k => { delete k.parentId; });
+      REC = REC.filter(x => x.id !== id);
+    } else if (c === 'DELETE') {
+      const ids = new Set([id, ...kids.map(k=>k.id)]);
+      REC = REC.filter(x => !ids.has(x.id));
+    } else {
+      return;
+    }
+    closeModal('ov-main'); render();
+    saveAndWait();
+    return;
+  }
   if (confirm('Delete this record? This cannot be undone.')) {
     REC = REC.filter(x => x.id !== id);
     closeModal('ov-main'); render();
-    saveAndWait(); // awaits flush so Google Sheets is updated before any refresh
+    saveAndWait();
   }
 }
 
 // ── Add / Edit form ────────────────────────────────────────────────────────
 function openAdd()  { showForm(null); }
 function openEdit(id) { showForm(REC.find(x => x.id === id)); }
+
+// Open Add form with the parent dropdown pre-selected (used from a Parent's detail)
+function openAddChild(parentId) {
+  closeModal('ov-main');
+  setTimeout(() => {
+    showForm(null);
+    setTimeout(() => {
+      const sel = $('f-parent');
+      if (sel) sel.value = String(parentId);
+      // Inherit stage from parent if it's an account
+      const par = REC.find(x => x.id === parentId);
+      if (par && par.type === 'account') selType('account');
+    }, 50);
+  }, 150);
+}
 function showForm(r) {
   const isEdit = !!r;
   const type = r ? r.type : 'prospect';
@@ -1135,6 +2146,25 @@ function showForm(r) {
         <div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.4">💡 Selecting certain steps will auto-create follow-up tasks: CRF Submitted (5d), Agreement Executed (2d), Equipment Ordered (7d).</div>
       </div>
     </div>
+    <div class="sec">Reference numbers & chain</div>
+    <div class="fr">
+      <div><label>Account # <span class="opt">(optional)</span></label>
+        <input id="f-acctno" type="text" value="${r?r.accountNumber||'':''}" placeholder="e.g. 123456" style="font-family:var(--mono)"></div>
+      <div><label>Chain # <span class="opt">(optional)</span></label>
+        <input id="f-chainno" type="text" value="${r?r.chainNumber||'':''}" placeholder="e.g. WS-CHAIN-001" style="font-family:var(--mono)"></div>
+    </div>
+    <div class="fr full"><div><label>Parent / Chain <span class="opt">(link to a parent record)</span></label>
+      <select id="f-parent">
+        <option value="">— None (standalone or top-level parent) —</option>
+        ${REC
+          .filter(x => !r || x.id !== r.id)  // can't be your own parent
+          .filter(x => !r || x.parentId !== r.id)  // can't pick a child as parent (one level)
+          .sort((a,b) => a.company.localeCompare(b.company))
+          .map(x => `<option value="${x.id}"${r&&r.parentId===x.id?' selected':''}>${escHtml(x.company)}${x.chainNumber?' ('+escHtml(x.chainNumber)+')':''}</option>`)
+          .join('')}
+      </select>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.4">💡 Pick a parent to make this record a Child location of a chain. Leave blank to be a standalone or top-level parent.</div>
+    </div></div>
     <div class="sec">Details</div>
     <div class="fr full"><div><label>Need / Request <span class="opt">(optional)</span></label>
       <textarea id="f-need">${r?r.need||'':''}</textarea></div></div>
@@ -1182,6 +2212,7 @@ function toggleHold() {
 }
 function saveRec(id) {
   const chk = $('ct-chk')?.checked;
+  const parentVal = $('f-parent') ? $('f-parent').value : '';
   const v = {
     type:      $('f-type').value,
     company:   $('f-co').value.trim(),
@@ -1190,6 +2221,9 @@ function saveRec(id) {
     value:     $('f-val').value.trim(),
     holdReason:$('f-hold') ? $('f-hold').value.trim() : '',
     prospectStep: ($('f-type').value === 'prospect' && $('f-pstep')) ? $('f-pstep').value : '',
+    accountNumber: $('f-acctno') ? $('f-acctno').value.trim() : '',
+    chainNumber:   $('f-chainno') ? $('f-chainno').value.trim() : '',
+    parentId:      parentVal === '' ? null : parseInt(parentVal),
     need:      $('f-need').value.trim(),
     installDate:$('f-inst').value || '',
     name:    chk ? $('f-name')?.value.trim()    || '' : '',
@@ -1410,7 +2444,10 @@ function xlImport(e) {
         'stage':'stage','priority':'priority','value':'value','email':'contact','phone':'phone','owner':'owner',
         'need / request':'need','need':'need','next step':'nextStep','next step due':'nextDue',
         'install date':'installDate','desired install date':'installDate',
-        'hold reason':'holdReason','contact name':'name'};
+        'hold reason':'holdReason','contact name':'name',
+        'account #':'accountNumber','account number':'accountNumber','acct #':'accountNumber','acct number':'accountNumber',
+        'chain #':'chainNumber','chain number':'chainNumber',
+        'parent':'parentName','parent / chain':'parentName','parent name':'parentName','chain':'parentName'};
       const headers = rows[hRow].map(h => String(h).replace(/[★*\s]+$/,'').trim().toLowerCase());
       const parsed = [], errors = [];
       rows.slice(hRow+1).forEach((row, ri) => {
@@ -1495,17 +2532,42 @@ function confirmImport() {
     if (!confirm(`Delete all ${REC.length} current records and replace? Cannot be undone.`)) return;
     REC = []; NID = 1; TID = 100;
   }
+  // Build new records (without parent linking yet — that's a 2nd pass)
   const imp = pendingImport.map(r => {
     const tasks = [];
     if (r.nextStep) tasks.push({id:tid(), title:r.nextStep, due:r.nextDue||'', done:false});
-    return {id:NID++, type:r.type, company:r.company, name:r.name||'', stage:r.stage,
-      priority:r.priority, value:r.value||'', contact:r.contact||'', phone:r.phone||'',
-      owner:r.owner||'', need:r.need||'', installDate:r.installDate||'',
-      holdReason:r.holdReason||'', tasks};
+    return {
+      id: NID++,
+      type: r.type, company: r.company, name: r.name||'', stage: r.stage,
+      priority: r.priority, value: r.value||'',
+      contact: r.contact||'', phone: r.phone||'', owner: r.owner||'',
+      need: r.need||'', installDate: r.installDate||'',
+      holdReason: r.holdReason||'',
+      accountNumber: r.accountNumber||'',
+      chainNumber:   r.chainNumber||'',
+      _parentName:   r.parentName||'', // temp field for 2nd-pass resolution
+      tasks
+    };
   });
   REC = mode === 'replace' ? imp : [...imp, ...REC];
+
+  // 2ND PASS: resolve _parentName -> parentId (case-insensitive, trimmed)
+  let linkedCount = 0, unlinkedCount = 0;
+  REC.forEach(r => {
+    if (r._parentName) {
+      const target = r._parentName.trim().toLowerCase();
+      const par = REC.find(x => x.id !== r.id && x.company.trim().toLowerCase() === target);
+      if (par) { r.parentId = par.id; linkedCount++; }
+      else { unlinkedCount++; }
+      delete r._parentName;
+    }
+  });
+
   save(); closeModal('ov-import'); render();
-  alert(`✓ Imported ${imp.length} record${imp.length!==1?'s':''} ${mode==='add'?'— added to existing data.':'— all data replaced.'}`);
+  let msg = `✓ Imported ${imp.length} record${imp.length!==1?'s':''} ${mode==='add'?'— added to existing data.':'— all data replaced.'}`;
+  if (linkedCount > 0)   msg += `\n   ⛓ ${linkedCount} child record${linkedCount>1?'s':''} linked to parent.`;
+  if (unlinkedCount > 0) msg += `\n   ⚠️ ${unlinkedCount} record${unlinkedCount>1?'s':''} had a Parent value that didn't match any existing record — left standalone.`;
+  alert(msg);
 }
 
 // ── Sync Setup Modal ───────────────────────────────────────────────────────
@@ -1833,13 +2895,362 @@ function printRecordPDF(id) {
   setTimeout(() => window.print(), 200);
 }
 
+// ── Project CRUD ───────────────────────────────────────────────────────────
+function openAddProject()  { showProjectForm(null); }
+function openEditProject(id) { showProjectForm(PRJ.find(x => x.id === id)); }
+
+function showProjectForm(p) {
+  const isEdit = !!p;
+  const cats = PROJECT_CATEGORIES;
+  $('m-main').innerHTML = `
+    <div class="mh">${isEdit ? 'Edit Project — '+(p.title||'') : 'Add new project'}</div>
+    <div class="sec">Project info</div>
+    <div class="fr full"><div><label>Title <span style="color:var(--red)">*</span></label>
+      <input id="pf-title" type="text" value="${p?escAttr(p.title||''):''}" placeholder="e.g. Q3 Price Increase rollout"></div></div>
+    <div class="fr">
+      <div><label>Category</label><select id="pf-cat">
+        <option value="">— None —</option>
+        ${cats.map(c => `<option${p&&p.category===c?' selected':''}>${escHtml(c)}</option>`).join('')}
+        <option value="__add__">+ Add new category…</option>
+      </select></div>
+      <div><label>Status</label><select id="pf-status">
+        ${['Not Started','In Progress','Complete'].map(s => `<option${p&&p.status===s?' selected':''}>${s}</option>`).join('')}
+      </select></div>
+    </div>
+    <div class="fr">
+      <div><label>Due Date <span class="opt">(optional)</span></label>
+        <input id="pf-due" type="date" value="${p?p.dueDate||'':''}"></div>
+      <div><label>Priority Override <span class="opt">(auto if blank)</span></label>
+        <select id="pf-pri">
+          <option value="">Auto (based on due date)</option>
+          <option${p&&p.priorityOverride==='P1'?' selected':''}>P1</option>
+          <option${p&&p.priorityOverride==='P2'?' selected':''}>P2</option>
+          <option${p&&p.priorityOverride==='P3'?' selected':''}>P3</option>
+          <option${p&&p.priorityOverride==='None'?' selected':''}>None</option>
+        </select></div>
+    </div>
+    <div class="fr full"><div><label>Description <span class="opt">(optional)</span></label>
+      <textarea id="pf-desc">${p?escHtml(p.description||''):''}</textarea></div></div>
+    <div class="fr full"><div><label>Notes / Pick Up Point <span class="opt">(optional)</span></label>
+      <textarea id="pf-notes" style="height:80px">${p?escHtml(p.notes||''):''}</textarea></div></div>
+    ${isEdit ? `<div style="margin-top:6px;padding:9px 11px;background:var(--surf2);border-radius:var(--r);font-size:12px;color:var(--text2)">
+      💡 Sub-tasks are managed from the project detail view. Save and open the project to add or edit tasks.</div>` : ''}
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal('ov-main')">Cancel</button>
+      <button class="btn pri" onclick="saveProject(${p ? "'"+p.id+"'" : 'null'})">${isEdit?'Save changes':'Add project'}</button>
+    </div>`;
+  showOverlay('ov-main');
+
+  // Handle add-new-category in dropdown
+  $('pf-cat').addEventListener('change', function(){
+    if (this.value === '__add__') {
+      const newCat = (prompt('Enter new category name:')||'').trim();
+      if (newCat && !PROJECT_CATEGORIES.includes(newCat)) {
+        PROJECT_CATEGORIES.push(newCat);
+        save();
+      }
+      // Rebuild this select
+      const cur = newCat || '';
+      this.innerHTML = '<option value="">— None —</option>'
+        + PROJECT_CATEGORIES.map(c => `<option${cur===c?' selected':''}>${escHtml(c)}</option>`).join('')
+        + '<option value="__add__">+ Add new category…</option>';
+    }
+  });
+}
+
+function saveProject(id) {
+  const v = {
+    title:       ($('pf-title')?.value || '').trim(),
+    category:    ($('pf-cat')?.value || ''),
+    status:      ($('pf-status')?.value || 'Not Started'),
+    dueDate:     ($('pf-due')?.value || ''),
+    priorityOverride: ($('pf-pri')?.value || ''),
+    description: ($('pf-desc')?.value || '').trim(),
+    notes:       ($('pf-notes')?.value || '').trim(),
+  };
+  if (v.category === '__add__') v.category = '';
+  if (!v.title) { alert('Project title is required.'); return; }
+
+  if (id === 'null' || id === null) {
+    const newP = {id: pjid(), ...v, tasks: [], created: new Date().toISOString()};
+    PRJ.unshift(newP);
+  } else {
+    const cleanId = id.replace(/^'|'$/g,''); // strip quotes if any
+    const p = PRJ.find(x => x.id === cleanId);
+    if (p) {
+      const tasks = p.tasks || [];
+      Object.assign(p, v);
+      p.tasks = tasks;
+    }
+  }
+  save(); closeModal('ov-main'); render();
+}
+
+function openProjectDetail(id) {
+  const p = PRJ.find(x => x.id === id); if (!p) return;
+  const stCls = p.status === 'Complete' ? 'st-co' : p.status === 'In Progress' ? 'st-ip' : 'st-ns';
+  const pri = projectPriority(p);
+  const pCls = priorityClass(pri);
+  const open = projectOpenTasks(p);
+  const done = projectCompletedTasks(p);
+  const total = open.length + done.length;
+  const pct = total ? Math.round((done.length/total)*100) : 0;
+
+  $('m-main').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:18px;font-weight:600;letter-spacing:-.3px">${escHtml(p.title)}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="b-prj">🗂 Project</span>
+          <span class="${stCls}">${p.status||'Not Started'}</span>
+          <span class="ppill ${pCls}">${priorityShort(pri)}</span>
+          ${p.category?`<span style="font-size:11px;color:var(--text2)">${escHtml(p.category)}</span>`:''}
+        </div>
+      </div>
+      <button class="btn" onclick="closeModal('ov-main')">✕</button>
+    </div>
+    ${p.description?`<div class="dbox" style="margin-bottom:10px"><div class="dl">Description</div><div style="font-size:13px;line-height:1.6;margin-top:3px">${escHtml(p.description)}</div></div>`:''}
+    ${p.dueDate?`<div class="dbox navy" style="margin-bottom:10px">
+      <div class="dl">Due Date</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <span style="font-size:14px;font-weight:600">${fDate(p.dueDate)}</span>
+        ${(()=>{const d=dDiff(p.dueDate);return d===null?'':`<span class="dpill ${dpCls(p.dueDate)}">${d<0?'Overdue '+Math.abs(d)+'d':d===0?'Today':d+'d away'}</span>`;})()}
+      </div>
+    </div>`:''}
+    ${total?`<div class="dbox" style="margin-bottom:10px">
+      <div class="dl">Progress</div>
+      <div style="margin-top:6px"><div style="background:var(--surf3);border-radius:8px;height:8px;overflow:hidden;width:100%">
+        <div style="background:var(--grn);height:100%;width:${pct}%;transition:width .3s"></div>
+      </div></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:5px">${done.length} of ${total} tasks complete (${pct}%)</div>
+    </div>`:''}
+    ${p.notes?`<div class="dbox gold" style="margin-bottom:10px"><div class="dl">Notes / Pick Up Point</div><div style="font-size:13px;line-height:1.6;margin-top:3px;white-space:pre-wrap">${escHtml(p.notes)}</div></div>`:''}
+
+    <div>
+      <div class="task-hdr">
+        <span class="task-hdr-lbl">Sub-tasks</span>
+        <span class="show-done" id="psd-${p.id}" onclick="toggleProjectShowDone('${p.id}')">${done.length>0?'Show completed':'No completed tasks'}</span>
+      </div>
+      <div class="task-list" id="ptlist-${p.id}">
+        ${(p.tasks||[]).map(t => projectTaskItemHTML(p.id, t)).join('')}
+        ${!(p.tasks||[]).length?'<div style="font-size:12px;color:var(--text3);padding:6px 0">No tasks yet. Add one below.</div>':''}
+      </div>
+      <div class="add-task" style="margin-top:8px;flex-wrap:wrap">
+        <input type="text" id="pnt-title-${p.id}" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addProjectTask('${p.id}')" style="flex:1;min-width:140px">
+        <input type="date" id="pnt-due-${p.id}" title="Due date (optional)">
+        <input type="number" id="pnt-rec-count-${p.id}" min="1" max="99" placeholder="#" style="width:48px;height:30px;font-size:12px;padding:0 6px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font);outline:none" title="Repeat every N units (optional)">
+        <select id="pnt-rec-unit-${p.id}" style="height:30px;font-size:12px;padding:0 6px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font);outline:none" title="Recurrence unit">
+          <option value="">No repeat</option>
+          <option value="days">Day(s)</option>
+          <option value="weeks">Week(s)</option>
+          <option value="months">Month(s)</option>
+        </select>
+        <button class="abtn" onclick="addProjectTask('${p.id}')">+ Add task</button>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="openEditProject('${p.id}')">Edit project</button>
+      <button class="btn amb" onclick="printProjectPDF('${p.id}')">📄 PDF Snapshot</button>
+      <button class="btn danger" onclick="delProject('${p.id}')">Delete</button>
+    </div>`;
+  showOverlay('ov-main');
+}
+
+function projectTaskItemHTML(pjId, t) {
+  const tp = taskPriority(t);
+  const pCls = priorityClass(tp);
+  const dp = t.due && !t.done ? `<span class="tdp ${dpCls(t.due)}">${dLbl(t.due)||fDate(t.due)}</span>` : (t.due&&t.done?`<span style="font-size:10px;color:var(--text3)">${fDate(t.due)}</span>`:'');
+  const recLbl = recurrenceLabel(t.recurrence);
+  const recBadge = recLbl
+    ? `<span style="font-size:10px;font-weight:600;color:#5C7BBF;background:#E8EDF5;border:1px solid #B0C0E0;padding:1px 7px;border-radius:20px;cursor:pointer;white-space:nowrap" onclick="event.stopPropagation();editTaskRecurrence('project','${pjId}','${t.id}')" title="${recLbl} — click to edit">🔁 ${recurrenceShort(t.recurrence)}</span>`
+    : `<span style="font-size:10px;color:var(--text3);cursor:pointer;border:1px dashed var(--bdr);padding:1px 6px;border-radius:20px" onclick="event.stopPropagation();editTaskRecurrence('project','${pjId}','${t.id}')" title="Set recurrence">🔁</span>`;
+  return `<div class="titem${t.done?' done':''}" id="pti-${t.id}" data-done="${t.done}">
+    <input type="checkbox" ${t.done?'checked':''} onclick="toggleProjectTask('${pjId}','${t.id}')">
+    <span class="tt">${escHtml(t.title)}</span>
+    <span class="ppill ${pCls}" style="font-size:9px">${priorityShort(tp)}</span>
+    ${recBadge}
+    ${dp}
+    <button class="tdel" onclick="deleteProjectTask('${pjId}','${t.id}')" title="Remove">×</button>
+  </div>`;
+}
+
+function addProjectTask(pjId) {
+  const ti = $('pnt-title-'+pjId), di = $('pnt-due-'+pjId);
+  const ru = $('pnt-rec-unit-'+pjId), rc = $('pnt-rec-count-'+pjId);
+  const title = ti ? ti.value.trim() : ''; if (!title) return;
+  const p = PRJ.find(x => x.id === pjId); if (!p) return;
+  if (!p.tasks) p.tasks = [];
+  const newTask = {id: tid(), title, due: di ? di.value || '' : '', done: false};
+  const unit  = ru ? ru.value.trim() : '';
+  const count = rc ? parseInt(rc.value || '0') : 0;
+  if (unit && count && count >= 1) {
+    newTask.recurrence = {unit, count};
+  }
+  p.tasks.push(newTask);
+  if (p.status === 'Not Started') p.status = 'In Progress';
+  save(); openProjectDetail(pjId); render();
+}
+
+function toggleProjectTask(pjId, taskId) {
+  const p = PRJ.find(x => x.id === pjId); if (!p) return;
+  const t = (p.tasks||[]).find(x => x.id === taskId); if (!t) return;
+  t.done = !t.done;
+  if (t.done) {
+    const now = new Date();
+    t.doneDate = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+    // Recurrence: spawn the next occurrence
+    if (t.recurrence && t.recurrence.unit && t.recurrence.count) {
+      const nextDue = nextRecurrenceDate(t.doneDate, t.recurrence);
+      if (nextDue) {
+        p.tasks.push({
+          id: tid(),
+          title: t.title,
+          due: nextDue,
+          done: false,
+          recurrence: {unit: t.recurrence.unit, count: t.recurrence.count},
+          spawnedFrom: t.id
+        });
+      }
+    }
+    // If all tasks done, auto-mark project Complete (only check after recurrence push)
+    if ((p.tasks||[]).every(x => x.done)) p.status = 'Complete';
+  } else {
+    delete t.doneDate;
+    if (p.status === 'Complete') p.status = 'In Progress';
+  }
+  save();
+  if ($('ov-main').classList.contains('show')) openProjectDetail(pjId);
+  render();
+}
+
+function deleteProjectTask(pjId, taskId) {
+  const p = PRJ.find(x => x.id === pjId); if (!p) return;
+  p.tasks = (p.tasks||[]).filter(t => t.id !== taskId);
+  save(); openProjectDetail(pjId); render();
+}
+
+function toggleProjectShowDone(pjId) {
+  const list = $('ptlist-'+pjId); if (!list) return;
+  const doneItems = [...list.querySelectorAll('.titem[data-done="true"]')];
+  const anyHidden = doneItems.some(el => el.style.display === 'none');
+  doneItems.forEach(el => el.style.display = anyHidden ? '' : 'none');
+  const btn = $('psd-'+pjId);
+  if (btn) btn.textContent = anyHidden ? 'Hide completed' : 'Show completed';
+}
+
+function delProject(id) {
+  if (confirm('Delete this project? This cannot be undone.')) {
+    PRJ = PRJ.filter(x => x.id !== id);
+    closeModal('ov-main'); render();
+    saveAndWait();
+  }
+}
+
+// ── Project PDF Snapshot ────────────────────────────────────────────────────
+function printProjectPDF(id) {
+  const p = PRJ.find(x => x.id === id); if (!p) return;
+  const now = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const open = projectOpenTasks(p);
+  const done = projectCompletedTasks(p);
+  const total = open.length + done.length;
+  const pct = total ? Math.round((done.length/total)*100) : 0;
+  const pri = projectPriority(p);
+
+  function tRows(tasks, isDone) {
+    if (!tasks.length) return `<tr><td colspan="3" style="color:#999;font-style:italic;font-size:10px;padding:5px 7px">None</td></tr>`;
+    return tasks.map(t => {
+      const tp = taskPriority(t);
+      const ds = dStat(t.due);
+      const dueCls = isDone ? 'color:#1A7A52' : (ds==='over'?'color:#B83030':ds==='soon'?'color:#9A6B00':'');
+      return `<tr>
+        <td style="font-size:10px;padding:4px 7px;${isDone?'text-decoration:line-through;color:#999':''}">${escHtml(t.title)} <span style="font-size:9px;color:#666">[${tp}]</span></td>
+        <td style="font-size:10px;padding:4px 7px;white-space:nowrap;${dueCls}">${t.due?fDate(t.due):'—'}</td>
+        <td style="font-size:10px;padding:4px 7px;white-space:nowrap;color:#1A7A52">${t.doneDate?fDate(t.doneDate):isDone?'✓':''}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  $('print-area').innerHTML = `
+    <div class="rph">${escHtml(p.title)}</div>
+    <div class="rps">
+      Project Snapshot · Generated ${now}
+      &nbsp;·&nbsp; ${p.status||'Not Started'}
+      &nbsp;·&nbsp; ${pri}
+      ${p.category ? '&nbsp;·&nbsp; '+escHtml(p.category) : ''}
+    </div>
+
+    <table class="pt" style="margin-bottom:10px">
+      <thead><tr><th style="width:25%">Field</th><th>Details</th></tr></thead>
+      <tbody>
+        ${p.description?`<tr><td style="font-weight:600">Description</td><td>${escHtml(p.description)}</td></tr>`:''}
+        ${p.dueDate?`<tr><td style="font-weight:600">Due Date</td><td>${fDate(p.dueDate)}</td></tr>`:''}
+        ${total?`<tr><td style="font-weight:600">Progress</td><td>${done.length} of ${total} tasks complete (${pct}%)</td></tr>`:''}
+        ${p.notes?`<tr><td style="font-weight:600">Notes / Pick Up Point</td><td style="white-space:pre-wrap">${escHtml(p.notes)}</td></tr>`:''}
+      </tbody>
+    </table>
+
+    <div class="rpg">Open Tasks (${open.length})</div>
+    <table class="pt" style="margin-bottom:10px">
+      <thead><tr><th style="width:60%">Task</th><th style="width:20%">Due Date</th><th style="width:20%">Completed</th></tr></thead>
+      <tbody>${tRows(open, false)}</tbody>
+    </table>
+
+    <div class="rpg">Completed Tasks (${done.length})</div>
+    <table class="pt">
+      <thead><tr><th style="width:60%">Task</th><th style="width:20%">Due Date</th><th style="width:20%">Completed</th></tr></thead>
+      <tbody>${tRows(done, true)}</tbody>
+    </table>`;
+
+  closeModal('ov-main');
+  setTimeout(() => window.print(), 200);
+}
+
+// ── Small utility helpers (HTML escaping) ──────────────────────────────────
+function escHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escAttr(s) { return escHtml(s); }
+
 // ── Modal helpers ──────────────────────────────────────────────────────────
 function showOverlay(id) { $(id).classList.add('show'); }
 function closeModal(id)  { $(id).classList.remove('show'); }
 function bgClose(e, id)  { if (e.target === $(id)) closeModal(id); }
 
+// ── Mobile "More" menu controls ────────────────────────────────────────────
+function toggleMoreMenu(e) {
+  e && e.stopPropagation();
+  const m = $('more-menu');
+  if (m) m.classList.toggle('show');
+}
+function hideMoreMenu() {
+  const m = $('more-menu');
+  if (m) m.classList.remove('show');
+}
+// Close the More menu when tapping outside it
+document.addEventListener('click', (e) => {
+  const m = $('more-menu');
+  if (!m) return;
+  if (m.classList.contains('show') && !m.contains(e.target)) {
+    m.classList.remove('show');
+  }
+});
+
 // ── Init ───────────────────────────────────────────────────────────────────
 load();
+// Make sure the My Day tab is highlighted on first load (matches default activeView)
+document.querySelectorAll('.vbtn').forEach(b => {
+  b.classList.toggle('on', b.dataset.v === activeView);
+});
+// Make sure ftabs / tbar visibility matches the default view (myday)
+{
+  const showFtabs = activeView === 'cards' || activeView === 'table';
+  const showTbar  = activeView === 'cards' || activeView === 'kanban' || activeView === 'table';
+  if ($('ftabs')) $('ftabs').style.display = showFtabs ? '' : 'none';
+  if ($('main-tbar')) $('main-tbar').style.display = showTbar ? '' : 'none';
+}
 render();
 updateSyncStatus();
 // After local render, try to pull latest from Sheets in background

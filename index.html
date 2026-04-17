@@ -13,22 +13,75 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F2EDE3;--surf:#FFFFFF;--surf2:#F8F5EE;--surf3:#EDE5D8;
-  --text:#1B2A4A;--text2:#5C5246;--text3:#9B8F82;
-  --bdr:#DDD5C6;--bdr2:#C4B89E;
-  --navy:#1B2A4A;--gold:#C9A84C;--gold-s:#F5E6B8;--gold-t:#7A5E10;
+  /* HIGH-CONTRAST LIGHT THEME */
+  --bg:#F2F2F4;              /* soft warm-grey page — just enough tint */
+  --surf:#FFFFFF;            /* cards/panels stay pure white so they pop */
+  --surf2:#EAEAEE;           /* subtle grey hover/hint */
+  --surf3:#DCDCE2;           /* slightly stronger grey */
+  --text:#0A0A0A;            /* near-black primary text */
+  --text2:#3C3C43;           /* secondary text, still very dark */
+  --text3:#6B6B72;           /* tertiary / helper — darkened from before for contrast */
+  --bdr:#C8C8CE;             /* visible borders */
+  --bdr2:#8E8E93;            /* hover borders, strong contrast */
+  --navy:#1B2A4A;            /* primary brand blue — kept */
+  --gold:#C9A84C;            /* gold accent — kept for compatibility */
+  --gold-s:#FDF5DC;          /* soft gold bg (amber-warn) */
+  --gold-t:#6B4E00;          /* dark gold text for strong contrast on light bg */
   --r:8px;--rl:12px;--rxl:16px;
   --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
-  --grn:#1A7A52;--grn-s:#E0F3EA;--grn-t:#0D4A2F;
-  --amb:#C9A84C;--amb-s:#FBF4E0;--amb-t:#7A5E10;
-  --red:#B83030;--red-s:#FAE8E8;--red-t:#741C1C;
-  --grys:#EDE5D8;--gryt:#3D2E1E;
-  --tel-s:#D6F0E8;--tel-t:#0D4A2F;
-  --shd:0 1px 3px rgba(27,42,74,.08),0 1px 2px rgba(27,42,74,.04);
-  --shd-md:0 4px 14px rgba(27,42,74,.12),0 2px 4px rgba(27,42,74,.06);
+  /* Status colors — higher contrast versions */
+  --grn:#0E7A3D;             /* stronger green */
+  --grn-s:#DCFAE6;           /* soft green bg */
+  --grn-t:#0B5C2E;           /* deep green text */
+  --amb:#B87400;             /* darker amber for contrast */
+  --amb-s:#FFF4DC;           /* soft amber bg */
+  --amb-t:#6B4400;           /* deep amber text */
+  --red:#C8102E;             /* stronger red */
+  --red-s:#FFE4E6;           /* soft red bg */
+  --red-t:#7F0A1C;           /* deep red text */
+  --grys:#E5E5EA;--gryt:#2C2C2E;
+  --tel-s:#DCFAE6;--tel-t:#0B5C2E;
+  --shd:0 1px 2px rgba(0,0,0,.06),0 1px 1px rgba(0,0,0,.04);
+  --shd-md:0 4px 10px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.06);
+}
+
+/* DARK THEME */
+html[data-theme="dark"] {
+  --bg:#0A0A0A;              /* near-black page */
+  --surf:#1A1A1C;            /* cards/panels */
+  --surf2:#25252A;           /* hover */
+  --surf3:#3A3A40;           /* borders-as-fill */
+  --text:#FAFAFA;            /* near-white */
+  --text2:#D0D0D5;           /* light secondary */
+  --text3:#9A9AA0;           /* helper */
+  --bdr:#3A3A40;
+  --bdr2:#5A5A62;
+  --navy:#5B87D4;            /* bright blue for dark bg (was too dark) */
+  --gold:#E0C060;
+  --gold-s:#3A2E0A;
+  --gold-t:#F5DE80;
+  --grn:#35C077;
+  --grn-s:#0D3820;
+  --grn-t:#7DE4A8;
+  --amb:#F0A830;
+  --amb-s:#3A2600;
+  --amb-t:#FFD080;
+  --red:#F25065;
+  --red-s:#3A0F1A;
+  --red-t:#FF8090;
+  --grys:#3A3A40;--gryt:#D0D0D5;
+  --tel-s:#0D3820;--tel-t:#7DE4A8;
+  --shd:0 1px 2px rgba(0,0,0,.35),0 1px 1px rgba(0,0,0,.25);
+  --shd-md:0 4px 14px rgba(0,0,0,.45),0 2px 4px rgba(0,0,0,.3);
+}
+
+/* Smooth theme transitions */
+body, .card, .modal, .stat, .vbtn, .btn, .md-section, .dbox,
+.children-section, .agg-card, .more-pop, input, select, textarea {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
 }
 body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
-body::before{content:'';display:block;height:4px;background:linear-gradient(90deg,#1B2A4A 0%,#C9A84C 50%,#1B2A4A 100%);position:sticky;top:0;z-index:999}
+body::before{content:'';display:block;height:3px;background:var(--navy);position:sticky;top:0;z-index:999}
 .app{max-width:1460px;margin:0 auto;padding:14px 18px}
 
 /* Header */
@@ -322,10 +375,10 @@ select {
   padding-right: 28px;
 }
 
-/* Mobile header: "More" menu for secondary actions */
+/* Header: "More" menu for secondary actions (all devices) */
 .more-menu {
   position: relative;
-  display: none;
+  display: inline-block;
 }
 .more-menu.show .more-pop {
   display: flex;
@@ -356,6 +409,8 @@ select {
 .more-pop button:hover {
   background: var(--surf2);
 }
+/* Always hide the individual action buttons — they live in the ⋯ More menu */
+.hdr-r .btn.mobile-hide { display: none !important; }
 
 /* ── TABLET (iPad) adjustments ─────────────────────────────────────── */
 @media (max-width: 1024px) {
@@ -381,10 +436,6 @@ select {
   .hdr h1 { font-size: 20px; letter-spacing: -.4px; }
   .hdr .sv { font-size: 11px; }
   .hdr-r { justify-content: flex-end; gap: 8px; }
-
-  /* Hide overflow buttons in header — move to "More" menu */
-  .hdr-r .btn.mobile-hide { display: none; }
-  .more-menu { display: inline-block; }
 
   /* All buttons — Apple's 44px minimum tap target */
   .btn { height: 44px; font-size: 15px; padding: 0 16px; font-weight: 500; }
@@ -615,6 +666,7 @@ select {
       <input type="file" id="xl-imp" accept=".xlsx,.xls" style="display:none" onchange="xlImport(event)">
       <button class="btn grn mobile-hide" onclick="xlExport()">📊 Excel</button>
       <button class="btn amb mobile-hide" onclick="openPdfModal()">📄 PDF</button>
+      <button class="btn" onclick="toggleTheme()" id="theme-btn" title="Toggle dark / light mode" style="padding:0 12px;font-size:16px">☀</button>
       <button class="btn" onclick="openSyncSetup()" id="sync-btn" title="Google Sheets sync settings">☁ Sync</button>
       <!-- Mobile-only "More" menu containing the hidden actions -->
       <div class="more-menu" id="more-menu">
@@ -1224,9 +1276,26 @@ function setView(el) {
   // Filter tabs only relevant in customer-record views
   const showFtabs = activeView === 'cards' || activeView === 'table';
   $('ftabs').style.display = showFtabs ? '' : 'none';
-  // Main toolbar (search + stage filter) only in customer-record views
-  const showTbar = activeView === 'cards' || activeView === 'kanban' || activeView === 'table';
-  $('main-tbar').style.display = showTbar ? '' : 'none';
+  // Search box is visible on ALL views; stage/priority filters only on customer views
+  $('main-tbar').style.display = '';
+  const showRecordFilters = activeView === 'cards' || activeView === 'kanban' || activeView === 'table';
+  const sf = $('sf'), pf = $('pf'), hc = $('hide-children');
+  if (sf) sf.style.display = showRecordFilters ? '' : 'none';
+  if (pf) pf.style.display = showRecordFilters ? '' : 'none';
+  if (hc) hc.parentElement.style.display = showRecordFilters ? '' : 'none';
+  // Update search placeholder for context
+  const srch = $('srch');
+  if (srch) {
+    const phMap = {
+      myday:    'Search tasks…',
+      tasks:    'Search tasks…',
+      projects: 'Search projects…',
+      cards:    'Search customers & prospects…',
+      kanban:   'Search customers & prospects…',
+      table:    'Search customers & prospects…'
+    };
+    srch.placeholder = phMap[activeView] || 'Search…';
+  }
   render();
 }
 function setTab(el) {
@@ -1466,7 +1535,18 @@ function toggleExp(id) { expandedRow = expandedRow===id ? null : id; renderTable
 
 // ── My Day View ────────────────────────────────────────────────────────────
 function renderMyDay() {
-  const items = allOpenTasks();
+  const q = ($('srch')?.value || '').toLowerCase().trim();
+  let items = allOpenTasks();
+  // Apply search filter
+  if (q) {
+    items = items.filter(({ref, refType, t}) => {
+      const ctx = refType === 'customer'
+        ? `${ref.company} ${ref.name||''} ${ref.accountNumber||''} ${ref.chainNumber||''}`
+        : `${ref.title||''} ${ref.category||''} ${ref.description||''}`;
+      const hay = `${t.title} ${ctx}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }
   // EXCLUDE P3 from active lists per the requirement; P3 has its own section
   const active = items.filter(({t}) => taskPriority(t) !== 'P3');
 
@@ -1557,7 +1637,8 @@ function renderProjects() {
   const statusF = $('prj-status')?.value || 'all';
   const catF    = $('prj-cat')?.value || '';
   const priF    = $('prj-pri')?.value || '';
-  const q       = ($('prj-search')?.value || '').toLowerCase();
+  // Honor both the main search and the project-specific search
+  const q       = (($('srch')?.value || '') + ' ' + ($('prj-search')?.value || '')).trim().toLowerCase();
 
   let list = PRJ.filter(p => {
     if (statusF === 'active' && p.status === 'Complete') return false;
@@ -1694,11 +1775,20 @@ function renderTasks() {
   const allItems = taskTab === 'completed'
     ? allCompletedTasks()
     : allOpenTasks();
+  const qSrch = ($('srch')?.value || '').toLowerCase().trim();
 
   // Apply filters
   let items = [];
   allItems.forEach(item => {
     const {ref, refType, t} = item;
+    // Search filter
+    if (qSrch) {
+      const ctx = refType === 'customer'
+        ? `${ref.company||''} ${ref.name||''} ${ref.accountNumber||''} ${ref.chainNumber||''}`
+        : `${ref.title||''} ${ref.category||''} ${ref.description||''}`;
+      const hay = `${t.title} ${ctx}`.toLowerCase();
+      if (!hay.includes(qSrch)) return;
+    }
     if (taskTab === 'completed') {
       if (drStart) {
         const d = pDate(t.doneDate || t.due);
@@ -3219,6 +3309,28 @@ function showOverlay(id) { $(id).classList.add('show'); }
 function closeModal(id)  { $(id).classList.remove('show'); }
 function bgClose(e, id)  { if (e.target === $(id)) closeModal(id); }
 
+// ── Theme (light/dark) controls ────────────────────────────────────────────
+function applyTheme(t) {
+  if (t === 'dark') {
+    document.documentElement.setAttribute('data-theme','dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = t === 'dark' ? '🌙' : '☀';
+}
+function toggleTheme() {
+  const cur = localStorage.getItem('rc_theme') || 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('rc_theme', next);
+  applyTheme(next);
+}
+// Apply saved preference immediately (before render to avoid flash)
+(function(){
+  const saved = localStorage.getItem('rc_theme') || 'light';
+  applyTheme(saved);
+})();
+
 // ── Mobile "More" menu controls ────────────────────────────────────────────
 function toggleMoreMenu(e) {
   e && e.stopPropagation();
@@ -3245,11 +3357,25 @@ document.querySelectorAll('.vbtn').forEach(b => {
   b.classList.toggle('on', b.dataset.v === activeView);
 });
 // Make sure ftabs / tbar visibility matches the default view (myday)
+// Search is ALWAYS visible; stage/priority filters only on customer-record views.
 {
   const showFtabs = activeView === 'cards' || activeView === 'table';
-  const showTbar  = activeView === 'cards' || activeView === 'kanban' || activeView === 'table';
+  const showRecordFilters = activeView === 'cards' || activeView === 'kanban' || activeView === 'table';
   if ($('ftabs')) $('ftabs').style.display = showFtabs ? '' : 'none';
-  if ($('main-tbar')) $('main-tbar').style.display = showTbar ? '' : 'none';
+  if ($('main-tbar')) $('main-tbar').style.display = '';
+  const sf = $('sf'), pf = $('pf'), hc = $('hide-children');
+  if (sf) sf.style.display = showRecordFilters ? '' : 'none';
+  if (pf) pf.style.display = showRecordFilters ? '' : 'none';
+  if (hc) hc.parentElement.style.display = showRecordFilters ? '' : 'none';
+  // Set placeholder to match default view
+  const srch = $('srch');
+  if (srch) {
+    const phMap = {
+      myday:'Search tasks…', tasks:'Search tasks…', projects:'Search projects…',
+      cards:'Search customers & prospects…', kanban:'Search customers & prospects…', table:'Search customers & prospects…'
+    };
+    srch.placeholder = phMap[activeView] || 'Search…';
+  }
 }
 render();
 updateSyncStatus();

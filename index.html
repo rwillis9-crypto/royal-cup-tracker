@@ -155,6 +155,33 @@ body::before{content:'';display:block;height:3px;background:var(--navy);position
 .pn{background:#F8F5EE;color:#9B8F82;border:1px dashed #C4B89E}
 /* Project view */
 .b-prj{background:#E8EDF5;color:#1B2A4A;font-size:9px;padding:1px 6px;border-radius:20px;font-weight:600}
+/* Multi-contact cards */
+.contact-card{background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 12px;margin-top:8px}
+.contact-card .cc-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px}
+.contact-card .cc-name{font-weight:600;font-size:13px}
+.contact-card .cc-pos{font-size:11px;color:var(--text2);font-style:italic}
+.contact-card .cc-row{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-top:4px}
+.contact-card .cc-notes{font-size:12px;margin-top:6px;color:var(--text);white-space:pre-wrap;line-height:1.5}
+.contact-card button.cc-del{width:22px;height:22px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:16px;border-radius:4px}
+.contact-card button.cc-del:hover{background:var(--red-s);color:var(--red)}
+/* Action plan entries */
+.ap-section{border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;margin-top:10px;background:var(--surf)}
+.ap-section .ap-shdr{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+.ap-section .ap-stitle{font-size:13px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--navy)}
+.ap-section .ap-scnt{font-size:11px;color:var(--text3);background:var(--surf2);padding:1px 7px;border-radius:20px}
+.ap-entry{background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:8px 10px;margin-top:6px}
+.ap-entry .ape-head{display:flex;justify-content:space-between;gap:6px;align-items:flex-start;margin-bottom:4px}
+.ap-entry .ape-title{font-weight:600;font-size:12px;flex:1;min-width:0}
+.ap-entry .ape-date{font-size:10px;color:var(--text3)}
+.ap-entry .ape-body{font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--text)}
+.ap-entry button.ape-del{width:20px;height:20px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:14px;border-radius:4px;flex-shrink:0}
+.ap-entry button.ape-del:hover{background:var(--red-s);color:var(--red)}
+.ap-add{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ap-add input[type=text]{flex:1;min-width:140px;height:30px;font-size:12px;padding:0 8px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font)}
+.ap-add textarea{width:100%;min-height:60px;font-size:12px;padding:7px 9px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font);outline:none;margin-top:6px}
+.ap-add .abtn{height:30px;padding:0 12px;font-size:12px;font-weight:600;border:1px solid var(--navy);border-radius:var(--r);background:var(--navy);color:#fff;cursor:pointer;white-space:nowrap;font-family:var(--font)}
+.ap-add .abtn:hover{opacity:.85}
+
 /* Parent/Child chain indicators */
 .b-parent{background:#1B2A4A;color:#fff;font-size:9px;padding:1px 7px;border-radius:20px;font-weight:600;letter-spacing:.03em}
 .b-child{background:#E8EDF5;color:#1B2A4A;font-size:9px;padding:1px 7px;border-radius:20px;font-weight:600;border:1px solid #5C7BBF}
@@ -2007,7 +2034,7 @@ function openDetail(id) {
       </div>
     </div>`:''}
     ${hasContact?`<div class="dbox" style="margin-bottom:10px">
-      <div class="dl">Contact details</div>
+      <div class="dl">Primary contact</div>
       <div class="d2" style="margin-top:6px;margin-bottom:0">
         ${r.name?`<div><div class="dl" style="font-size:9px">Name</div><div class="dv">${r.name}</div></div>`:''}
         ${r.contact?`<div><div class="dl" style="font-size:9px">Email</div><div class="dv" style="font-size:12px">${r.contact}</div></div>`:''}
@@ -2015,6 +2042,34 @@ function openDetail(id) {
         ${r.owner?`<div><div class="dl" style="font-size:9px">Owner</div><div class="dv">${r.owner}</div></div>`:''}
       </div>
     </div>`:''}
+    ${(r.serviceType||r.address)?`<div class="dbox" style="margin-bottom:10px">
+      <div class="d2" style="margin-top:0;margin-bottom:0">
+        ${r.serviceType?`<div><div class="dl" style="font-size:9px">Service Type</div><div class="dv" style="font-weight:600">${escHtml(r.serviceType)}</div></div>`:''}
+        ${r.address?`<div><div class="dl" style="font-size:9px">Address</div><div class="dv" style="font-size:12px;white-space:pre-wrap">${escHtml(r.address)}</div></div>`:''}
+      </div>
+    </div>`:''}
+    <!-- Additional Contacts section (collapsible) -->
+    <div class="dbox" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleSection('contacts-${r.id}')">
+        <div class="dl" style="margin:0">Additional Contacts (${(r.contacts||[]).length})</div>
+        <span style="font-size:11px;color:var(--navy);font-weight:600" id="contacts-toggle-${r.id}">Show ▾</span>
+      </div>
+      <div id="contacts-${r.id}" style="display:none;margin-top:8px">
+        ${(r.contacts||[]).map(c => contactCardHTML(r.id, c)).join('')}
+        ${!(r.contacts||[]).length?'<div style="font-size:12px;color:var(--text3);padding:4px 0;font-style:italic">No additional contacts yet.</div>':''}
+        <button class="btn pri" style="margin-top:8px;height:30px;font-size:12px" onclick="openAddContact(${r.id})">+ Add contact</button>
+      </div>
+    </div>
+    <!-- Action Plan section (collapsible) -->
+    <div class="dbox" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleSection('actionplan-${r.id}')">
+        <div class="dl" style="margin:0">Account Action Plan</div>
+        <span style="font-size:11px;color:var(--navy);font-weight:600" id="actionplan-toggle-${r.id}">Show ▾</span>
+      </div>
+      <div id="actionplan-${r.id}" style="display:none;margin-top:8px">
+        ${renderActionPlan(r)}
+      </div>
+    </div>
     <div>
       <div class="task-hdr">
         <span class="task-hdr-lbl">Tasks</span>
@@ -2040,10 +2095,272 @@ function openDetail(id) {
     <div class="mfoot">
       <button class="btn" onclick="openEdit(${r.id})">Edit record</button>
       <button class="btn amb" onclick="printRecordPDF(${r.id})">📄 PDF Snapshot</button>
+      <button class="btn pri" onclick="printAccountPlan(${r.id})">📋 Account Plan</button>
       <button class="btn danger" onclick="delRec(${r.id})">Delete</button>
     </div>`;
   showOverlay('ov-main');
 }
+// Toggle a collapsible section in the detail modal
+function toggleSection(id) {
+  const el = $(id);
+  if (!el) return;
+  const toggleBtn = $(id + '-toggle');
+  const visible = el.style.display !== 'none';
+  el.style.display = visible ? 'none' : '';
+  if (toggleBtn) toggleBtn.textContent = visible ? 'Show ▾' : 'Hide ▴';
+}
+
+// ── Multi-contact helpers ──────────────────────────────────────────────────
+function contactCardHTML(recId, c) {
+  return `<div class="contact-card" id="cc-${c.id}">
+    <div class="cc-head">
+      <div style="flex:1;min-width:0">
+        <div class="cc-name">${escHtml(c.name || 'Unnamed')}</div>
+        ${c.position?`<div class="cc-pos">${escHtml(c.position)}</div>`:''}
+      </div>
+      <button class="cc-del" onclick="deleteContact(${recId},'${c.id}')" title="Remove contact">×</button>
+    </div>
+    ${(c.email||c.phone)?`<div class="cc-row">
+      ${c.email?`<a href="mailto:${escAttr(c.email)}" style="color:var(--navy);text-decoration:none">✉ ${escHtml(c.email)}</a>`:''}
+      ${c.phone?`<a href="tel:${escAttr(c.phone)}" style="color:var(--navy);text-decoration:none">☎ ${escHtml(c.phone)}</a>`:''}
+    </div>`:''}
+    ${c.notes?`<div class="cc-notes">${escHtml(c.notes)}</div>`:''}
+  </div>`;
+}
+function openAddContact(recId) {
+  $('m-pdf').innerHTML = `
+    <div class="mh">Add Contact</div>
+    <div class="fr full"><div><label>Name</label>
+      <input id="cc-name" type="text" placeholder="Jane Smith"></div></div>
+    <div class="fr full"><div><label>Position / Title</label>
+      <input id="cc-pos" type="text" placeholder="e.g. Facilities Manager, Sysco Account Manager"></div></div>
+    <div class="fr">
+      <div><label>Email</label><input id="cc-email" type="email" placeholder="jane@company.com"></div>
+      <div><label>Phone</label><input id="cc-phone" type="text" placeholder="404-555-0100"></div>
+    </div>
+    <div class="fr full"><div><label>Notes <span class="opt">(optional)</span></label>
+      <textarea id="cc-notes" style="height:80px" placeholder="Free-form notes about this contact…"></textarea></div></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal('ov-pdf')">Cancel</button>
+      <button class="btn pri" onclick="saveContact(${recId})">Add Contact</button>
+    </div>`;
+  showOverlay('ov-pdf');
+  setTimeout(() => $('cc-name')?.focus(), 50);
+}
+function saveContact(recId) {
+  const r = REC.find(x => x.id === recId); if (!r) return;
+  const c = {
+    id: 'c' + Date.now() + Math.floor(Math.random()*1000),
+    name:     $('cc-name')?.value.trim() || '',
+    position: $('cc-pos')?.value.trim()  || '',
+    email:    $('cc-email')?.value.trim()|| '',
+    phone:    $('cc-phone')?.value.trim()|| '',
+    notes:    $('cc-notes')?.value.trim()|| '',
+  };
+  if (!c.name && !c.email && !c.phone) {
+    alert('Please provide at least a name, email, or phone.');
+    return;
+  }
+  if (!r.contacts) r.contacts = [];
+  r.contacts.push(c);
+  save();
+  closeModal('ov-pdf');
+  openDetail(recId);
+  // Re-expand the contacts section after redraw
+  setTimeout(() => toggleSection('contacts-'+recId), 60);
+}
+function deleteContact(recId, cId) {
+  if (!confirm('Remove this contact?')) return;
+  const r = REC.find(x => x.id === recId); if (!r) return;
+  r.contacts = (r.contacts || []).filter(x => x.id !== cId);
+  save(); openDetail(recId);
+  setTimeout(() => toggleSection('contacts-'+recId), 60);
+}
+
+// ── Action Plan helpers ────────────────────────────────────────────────────
+const AP_SECTIONS = [
+  {key: 'overview',     title: 'Overview'},
+  {key: 'current',      title: 'Current State'},
+  {key: 'actions',      title: 'Action Items'},
+  {key: 'risks',        title: 'Risks'},
+  {key: 'opportunities',title: 'Opportunities'}
+];
+function renderActionPlan(r) {
+  const ap = r.actionPlan || {};
+  let html = '';
+  AP_SECTIONS.forEach(sec => {
+    const entries = ap[sec.key] || [];
+    html += `<div class="ap-section">
+      <div class="ap-shdr">
+        <span class="ap-stitle">${sec.title}</span>
+        <span class="ap-scnt">${entries.length} entr${entries.length===1?'y':'ies'}</span>
+      </div>
+      ${entries.map(e => apEntryHTML(r.id, sec.key, e)).join('')}
+      <div class="ap-add">
+        <input type="text" id="ap-title-${r.id}-${sec.key}" placeholder="Entry title (e.g. 'Q3 Equipment Review')">
+        <button class="abtn" onclick="addAPEntry(${r.id},'${sec.key}')">+ Add</button>
+        <textarea id="ap-body-${r.id}-${sec.key}" placeholder="Details for this entry… press Add to save"></textarea>
+      </div>
+    </div>`;
+  });
+  return html;
+}
+function apEntryHTML(recId, secKey, e) {
+  return `<div class="ap-entry">
+    <div class="ape-head">
+      <div class="ape-title">${escHtml(e.title || 'Untitled')}</div>
+      <div style="display:flex;gap:5px;align-items:center;flex-shrink:0">
+        ${e.date?`<span class="ape-date">${fDate(e.date)}</span>`:''}
+        <button class="ape-del" onclick="deleteAPEntry(${recId},'${secKey}','${e.id}')" title="Delete">×</button>
+      </div>
+    </div>
+    ${e.body?`<div class="ape-body">${escHtml(e.body)}</div>`:''}
+  </div>`;
+}
+function addAPEntry(recId, secKey) {
+  const ti = $('ap-title-'+recId+'-'+secKey);
+  const bi = $('ap-body-'+recId+'-'+secKey);
+  const title = ti ? ti.value.trim() : '';
+  const body  = bi ? bi.value.trim() : '';
+  if (!title && !body) return;
+  const r = REC.find(x => x.id === recId); if (!r) return;
+  if (!r.actionPlan) r.actionPlan = {};
+  if (!r.actionPlan[secKey]) r.actionPlan[secKey] = [];
+  const now = new Date();
+  const isoDate = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  r.actionPlan[secKey].push({
+    id: 'e' + Date.now() + Math.floor(Math.random()*1000),
+    title: title || 'Untitled',
+    body,
+    date: isoDate
+  });
+  save();
+  openDetail(recId);
+  setTimeout(() => toggleSection('actionplan-'+recId), 60);
+}
+function deleteAPEntry(recId, secKey, eId) {
+  if (!confirm('Delete this entry?')) return;
+  const r = REC.find(x => x.id === recId); if (!r) return;
+  if (!r.actionPlan || !r.actionPlan[secKey]) return;
+  r.actionPlan[secKey] = r.actionPlan[secKey].filter(x => x.id !== eId);
+  save(); openDetail(recId);
+  setTimeout(() => toggleSection('actionplan-'+recId), 60);
+}
+
+// ── Account Plan PDF ───────────────────────────────────────────────────────
+function printAccountPlan(id) {
+  const r = REC.find(x => x.id === id); if (!r) return;
+  const now = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const ap = r.actionPlan || {};
+  const contacts = r.contacts || [];
+  const parent = getParent(r);
+  const kids = isParent(r) ? getChildren(r.id) : [];
+
+  function fmtAddress(addr) {
+    if (!addr) return '—';
+    return escHtml(addr).replace(/\n/g,'<br>');
+  }
+
+  function sectionBlock(title, entries) {
+    if (!entries || !entries.length) return `<div class="ap-pdf-sec">
+      <div class="ap-pdf-title">${title}</div>
+      <div class="ap-pdf-empty">No entries.</div>
+    </div>`;
+    return `<div class="ap-pdf-sec">
+      <div class="ap-pdf-title">${title}</div>
+      ${entries.map(e => `<div class="ap-pdf-entry">
+        <div class="ap-pdf-ehead">
+          <span class="ap-pdf-etitle">${escHtml(e.title || 'Untitled')}</span>
+          ${e.date?`<span class="ap-pdf-edate">${fDate(e.date)}</span>`:''}
+        </div>
+        ${e.body?`<div class="ap-pdf-ebody">${escHtml(e.body).replace(/\n/g,'<br>')}</div>`:''}
+      </div>`).join('')}
+    </div>`;
+  }
+
+  $('print-area').innerHTML = `
+    <style>
+      .appdf-wrap{font-family:Arial,sans-serif;color:#0A0A0A}
+      .appdf-hdr{border-bottom:2px solid #1B2A4A;padding-bottom:10px;margin-bottom:12px}
+      .appdf-title{font-size:20px;font-weight:700;color:#1B2A4A;letter-spacing:-.3px}
+      .appdf-sub{font-size:10px;color:#555;margin-top:3px}
+      .appdf-meta{background:#F2F2F4;border:1px solid #C8C8CE;border-radius:6px;padding:10px 12px;margin-bottom:14px;font-size:10px}
+      .appdf-meta table{width:100%;border-collapse:collapse}
+      .appdf-meta td{padding:3px 7px;vertical-align:top}
+      .appdf-meta td.lbl{font-weight:700;color:#3C3C43;width:120px;text-transform:uppercase;font-size:9px;letter-spacing:.04em}
+      .appdf-meta td.val{color:#0A0A0A}
+      .appdf-grp-title{background:#1B2A4A;color:#fff;padding:5px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin:14px 0 8px}
+      .appdf-contact{background:#F8F8FA;border:1px solid #DDDDE0;border-radius:5px;padding:8px 10px;margin-bottom:6px;font-size:10px}
+      .appdf-cname{font-weight:700;font-size:11px;color:#0A0A0A}
+      .appdf-cpos{font-style:italic;color:#555;font-size:10px}
+      .appdf-crow{color:#333;margin-top:3px;font-size:10px}
+      .appdf-cnotes{margin-top:4px;color:#3C3C43;white-space:pre-wrap;font-size:10px;line-height:1.5}
+      .ap-pdf-sec{margin-bottom:12px;page-break-inside:avoid}
+      .ap-pdf-title{background:#F5E6B8;color:#6B4E00;padding:4px 10px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:5px;letter-spacing:.04em}
+      .ap-pdf-entry{border-left:2px solid #1B2A4A;padding:5px 8px;margin-bottom:5px;background:#F8F8FA;font-size:10px;page-break-inside:avoid}
+      .ap-pdf-ehead{display:flex;justify-content:space-between;gap:6px;margin-bottom:2px}
+      .ap-pdf-etitle{font-weight:700;font-size:10px;color:#0A0A0A}
+      .ap-pdf-edate{font-size:9px;color:#555}
+      .ap-pdf-ebody{font-size:10px;color:#3C3C43;line-height:1.5;white-space:pre-wrap}
+      .ap-pdf-empty{font-size:10px;color:#8A8A90;font-style:italic;padding:3px}
+      .appdf-kids{font-size:10px;margin:4px 0 0;padding-left:16px;line-height:1.5}
+      .appdf-foot{margin-top:18px;padding-top:8px;border-top:1px solid #C8C8CE;font-size:8px;color:#8A8A90;text-align:center}
+    </style>
+    <div class="appdf-wrap">
+      <div class="appdf-hdr">
+        <div class="appdf-title">${escHtml(r.company)}</div>
+        <div class="appdf-sub">Account Plan · Generated ${now}</div>
+      </div>
+
+      <div class="appdf-meta">
+        <table>
+          <tr><td class="lbl">Type</td><td class="val">${r.type==='account'?'Account':'Prospect'} · ${escHtml(r.stage)}</td></tr>
+          ${r.priority?`<tr><td class="lbl">Priority</td><td class="val">${r.priority}</td></tr>`:''}
+          ${r.accountNumber?`<tr><td class="lbl">Account #</td><td class="val" style="font-family:monospace">${escHtml(r.accountNumber)}</td></tr>`:''}
+          ${r.chainNumber?`<tr><td class="lbl">Chain #</td><td class="val" style="font-family:monospace">${escHtml(r.chainNumber)}</td></tr>`:''}
+          ${parent?`<tr><td class="lbl">Parent Chain</td><td class="val">${escHtml(parent.company)}</td></tr>`:''}
+          ${isParent(r)?`<tr><td class="lbl">Chain Locations</td><td class="val">${kids.length} location${kids.length===1?'':'s'}<div class="appdf-kids">${kids.map(k => '• ' + escHtml(k.company)).join('<br>')}</div></td></tr>`:''}
+          ${r.serviceType?`<tr><td class="lbl">Service Type</td><td class="val"><strong>${escHtml(r.serviceType)}</strong></td></tr>`:''}
+          ${r.value?`<tr><td class="lbl">Value</td><td class="val">${escHtml(r.value)}</td></tr>`:''}
+          ${r.address?`<tr><td class="lbl">Address</td><td class="val">${fmtAddress(r.address)}</td></tr>`:''}
+          ${r.installDate?`<tr><td class="lbl">Install Date</td><td class="val">${fDate(r.installDate)}</td></tr>`:''}
+          ${r.need?`<tr><td class="lbl">Need / Request</td><td class="val">${escHtml(r.need)}</td></tr>`:''}
+        </table>
+      </div>
+
+      ${(r.name||r.contact||r.phone||r.owner)?`
+      <div class="appdf-grp-title">Primary Contact</div>
+      <div class="appdf-contact">
+        ${r.name?`<div class="appdf-cname">${escHtml(r.name)}</div>`:''}
+        ${r.owner?`<div class="appdf-cpos">Owner: ${escHtml(r.owner)}</div>`:''}
+        <div class="appdf-crow">
+          ${r.contact?`✉ ${escHtml(r.contact)}`:''}
+          ${r.phone?` &nbsp; ☎ ${escHtml(r.phone)}`:''}
+        </div>
+      </div>`:''}
+
+      ${contacts.length?`
+      <div class="appdf-grp-title">Additional Contacts (${contacts.length})</div>
+      ${contacts.map(c => `<div class="appdf-contact">
+        <div class="appdf-cname">${escHtml(c.name || 'Unnamed')}</div>
+        ${c.position?`<div class="appdf-cpos">${escHtml(c.position)}</div>`:''}
+        <div class="appdf-crow">
+          ${c.email?`✉ ${escHtml(c.email)}`:''}
+          ${c.phone?` &nbsp; ☎ ${escHtml(c.phone)}`:''}
+        </div>
+        ${c.notes?`<div class="appdf-cnotes">${escHtml(c.notes)}</div>`:''}
+      </div>`).join('')}`:''}
+
+      <div class="appdf-grp-title">Account Action Plan</div>
+      ${AP_SECTIONS.map(sec => sectionBlock(sec.title, ap[sec.key])).join('')}
+
+      <div class="appdf-foot">Royal Cup Sales Tracker · Account Plan for ${escHtml(r.company)} · ${now}</div>
+    </div>`;
+
+  closeModal('ov-main');
+  setTimeout(() => window.print(), 250);
+}
+
 function taskItemHTML(recId, t) {
   const tp = taskPriority(t);
   const pCls = priorityClass(tp);
@@ -2269,12 +2586,23 @@ function showForm(r) {
     <div class="sec">Details</div>
     <div class="fr full"><div><label>Need / Request <span class="opt">(optional)</span></label>
       <textarea id="f-need">${r?r.need||'':''}</textarea></div></div>
-    <div class="fr full"><div><label>Desired install date <span class="opt">(optional)</span></label>
-      <input id="f-inst" type="date" value="${r?r.installDate||'':''}" style="max-width:200px"></div></div>
+    <div class="fr">
+      <div><label>Desired install date <span class="opt">(optional)</span></label>
+        <input id="f-inst" type="date" value="${r?r.installDate||'':''}"></div>
+      <div><label>Service Type <span class="opt">(optional)</span></label>
+        <select id="f-svc">
+          <option value=""${!r||!r.serviceType?' selected':''}>— Not set —</option>
+          <option${r&&r.serviceType==='Route'?' selected':''}>Route</option>
+          <option${r&&r.serviceType==='Distributor'?' selected':''}>Distributor</option>
+          <option${r&&r.serviceType==='Other — Mixed'?' selected':''}>Other — Mixed</option>
+        </select></div>
+    </div>
+    <div class="fr full"><div><label>Address <span class="opt">(optional)</span></label>
+      <textarea id="f-addr" style="height:55px" placeholder="Street, City, State, Zip">${r?escHtml(r.address||''):''}</textarea></div></div>
     ${isEdit?`<div style="margin-top:6px;padding:9px 11px;background:var(--surf2);border-radius:var(--r);font-size:12px;color:var(--text2)">
-      💡 Tasks are managed from the record detail view. Save and open the record to add or edit tasks.</div>`
+      💡 Tasks, Contacts, and Action Plan are managed from the record detail view. Save and open the record to add them.</div>`
     :`<div style="margin-top:6px;padding:9px 11px;background:var(--surf2);border-radius:var(--r);font-size:12px;color:var(--text2)">
-      💡 After saving, open this record to add individual tasks with due dates.</div>`}
+      💡 After saving, open this record to add tasks, contacts, and action plan entries.</div>`}
     <label class="ctog">
       <input type="checkbox" id="ct-chk" ${hasContact?'checked':''} onchange="$('csec').className='csec'+(this.checked?' show':'')">
       <span>Show / add contact details (name, email, phone, owner)</span>
@@ -2327,6 +2655,8 @@ function saveRec(id) {
     parentId:      parentVal === '' ? null : parseInt(parentVal),
     need:      $('f-need').value.trim(),
     installDate:$('f-inst').value || '',
+    serviceType: $('f-svc') ? $('f-svc').value : '',
+    address:     $('f-addr') ? $('f-addr').value.trim() : '',
     name:    chk ? $('f-name')?.value.trim()    || '' : '',
     owner:   chk ? $('f-owner')?.value.trim()   || '' : '',
     contact: chk ? $('f-contact')?.value.trim() || '' : '',

@@ -929,7 +929,13 @@ async function pushToSheets(fullData) {
   const url = syncCfg.scriptUrl + '?action=set&d=' + payload + '&cb=' + Date.now();
   const resp = await fetch(url, {redirect: 'follow'});
   if (!resp.ok) throw new Error('HTTP ' + resp.status);
-  return resp.json();
+  const body = await resp.json();
+  // VERIFY the Apps Script actually saved — it returns {ok:true} on success.
+  // If it returns {error: '...'} or anything else, treat as failure.
+  if (!body || body.ok !== true) {
+    throw new Error('Apps Script rejected the push: ' + JSON.stringify(body));
+  }
+  return body;
 }
 async function pullFromSheets() {
   if (!syncCfg.scriptUrl) return null;
@@ -941,18 +947,24 @@ async function pullFromSheets() {
 
 // ── Queue flush ────────────────────────────────────────────────────────────
 async function flushQueue() {
-  if (!syncCfg.scriptUrl || !isOnline || syncInFlight || !syncQueue.length) return;
+  if (!syncCfg.scriptUrl || !isOnline || syncInFlight || !syncQueue.length) return false;
   syncInFlight = true; updateSyncStatus();
+  let ok = false;
   try {
     const ts = Date.now();
     const payload = {rec: REC, nid: NID, tid: TID, prj: PRJ, pjid: PJID, cats: PROJECT_CATEGORIES, ts};
     await pushToSheets(payload);
+    // ONLY after verified success: clear the queue AND stamp the push timestamp
     syncQueue = []; saveQueue();
     localStorage.setItem('rc_last_push_ts', String(ts));
+    ok = true;
   } catch(e) {
     console.warn('Sync flush failed:', e);
+    // Keep the queue populated so the retry interval tries again
+    // Do NOT update rc_last_push_ts on failure
   }
   syncInFlight = false; updateSyncStatus();
+  return ok;
 }
 
 // Queue a change and try to flush immediately
@@ -960,7 +972,8 @@ async function flushQueue() {
 async function queueSync() {
   syncQueue.push({ts: Date.now()});
   saveQueue(); updateSyncStatus();
-  if (isOnline) await flushQueue();
+  if (isOnline) return await flushQueue();
+  return false;
 }
 
 // ── Load from Sheets on startup (if online) ────────────────────────────────
@@ -978,9 +991,10 @@ async function loadFromSheets() {
     const hasPending  = syncQueue.length > 0;
     const remoteRec   = Array.isArray(d.rec) ? d.rec : [];
 
-    if (hasPending) {
-      // We have local changes that haven't synced yet — push them up
-      await flushQueue();
+    if (hasPending || syncInFlight) {
+      // We have local changes that haven't synced yet — push them up first
+      // (syncInFlight means another push is happening; wait for it instead of pulling stale)
+      if (hasPending) await flushQueue();
     } else if (remoteTs > lastPushTs) {
       REC = remoteRec;
       NID = d.nid || NID;
@@ -1027,7 +1041,33 @@ function save() {
 async function saveAndWait() {
   localStorage.setItem(STORE, JSON.stringify({rec: REC, nid: NID, tid: TID, prj: PRJ, pjid: PJID, cats: PROJECT_CATEGORIES}));
   const el = $('sv'); if (el) el.textContent = 'Saved ' + new Date().toLocaleTimeString();
-  await queueSync();
+  // Always push something onto the queue so the eventual flush has work to do.
+  syncQueue.push({ts: Date.now()}); saveQueue(); updateSyncStatus();
+  // If not online or no sync url set: queue only — when we come back online,
+  // the retry interval or the next user action will flush.
+  if (!syncCfg.scriptUrl || !isOnline) return false;
+  // Wait (up to 8s) for any in-flight push to finish before trying our own.
+  // This prevents false-negative warnings when deletes happen rapidly.
+  const waitStart = Date.now();
+  while (syncInFlight && Date.now() - waitStart < 8000) {
+    await new Promise(res => setTimeout(res, 50));
+  }
+  // After the wait: the queue might already have been flushed by the other push
+  // (which included our data — REC is shared). Only proceed if queue isn't empty.
+  if (!syncQueue.length) return true;
+  // Try to flush up to 3 times with short backoff if something goes wrong.
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const ok = await flushQueue();
+    if (ok) return true;
+    // If another push grabbed the queue while we were waiting, the queue is empty now
+    if (!syncQueue.length) return true;
+    if (attempt < 3) await new Promise(res => setTimeout(res, 400 * attempt));
+  }
+  // All retries failed — warn the user
+  alert('⚠️ Warning: Your change was saved locally but could not sync to Google Sheets ' +
+        'after 3 attempts. Check your internet connection and click the ☁ Sync button, ' +
+        'or the change may revert the next time this page reloads.');
+  return false;
 }
 function load() {
   loadSyncCfg();
@@ -2473,7 +2513,7 @@ function toggleShowDone(recId) {
   const btn = $('sd-btn-'+recId);
   if (btn) btn.textContent = anyHidden ? 'Hide completed' : 'Show completed';
 }
-function delRec(id) {
+async function delRec(id) {
   const r = REC.find(x => x.id === id);
   if (!r) return;
   const kids = getChildren(id);
@@ -2498,13 +2538,13 @@ function delRec(id) {
       return;
     }
     closeModal('ov-main'); render();
-    saveAndWait();
+    await saveAndWait(); // AWAIT so we don't continue until push succeeds
     return;
   }
   if (confirm('Delete this record? This cannot be undone.')) {
     REC = REC.filter(x => x.id !== id);
     closeModal('ov-main'); render();
-    saveAndWait();
+    await saveAndWait(); // AWAIT so the push actually happens
   }
 }
 
@@ -3569,11 +3609,11 @@ function toggleProjectShowDone(pjId) {
   if (btn) btn.textContent = anyHidden ? 'Hide completed' : 'Show completed';
 }
 
-function delProject(id) {
+async function delProject(id) {
   if (confirm('Delete this project? This cannot be undone.')) {
     PRJ = PRJ.filter(x => x.id !== id);
     closeModal('ov-main'); render();
-    saveAndWait();
+    await saveAndWait();
   }
 }
 

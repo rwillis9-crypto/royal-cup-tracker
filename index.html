@@ -951,19 +951,30 @@ async function flushQueue() {
   syncInFlight = true; updateSyncStatus();
   let ok = false;
   try {
+    // Snapshot which queue entries we're sending. We'll only clear THESE entries
+    // on success, NOT the whole queue, so any new entries that arrive during the
+    // network roundtrip will still trigger another flush.
+    const snapshotCount = syncQueue.length;
     const ts = Date.now();
     const payload = {rec: REC, nid: NID, tid: TID, prj: PRJ, pjid: PJID, cats: PROJECT_CATEGORIES, ts};
     await pushToSheets(payload);
-    // ONLY after verified success: clear the queue AND stamp the push timestamp
-    syncQueue = []; saveQueue();
+    // Only remove the entries we saw when we started — any that arrived after
+    // represent changes to REC that happened AFTER we took our snapshot and
+    // still need to be pushed.
+    syncQueue = syncQueue.slice(snapshotCount);
+    saveQueue();
     localStorage.setItem('rc_last_push_ts', String(ts));
     ok = true;
   } catch(e) {
     console.warn('Sync flush failed:', e);
-    // Keep the queue populated so the retry interval tries again
-    // Do NOT update rc_last_push_ts on failure
   }
   syncInFlight = false; updateSyncStatus();
+  // If new changes accumulated during the flush (or a retry is pending), flush again.
+  if (ok && syncQueue.length) {
+    // Fire-and-forget re-flush for any changes that arrived during the roundtrip.
+    // Don't await — we'll return now and the caller can retry if needed.
+    setTimeout(() => flushQueue(), 10);
+  }
   return ok;
 }
 
@@ -1041,31 +1052,37 @@ function save() {
 async function saveAndWait() {
   localStorage.setItem(STORE, JSON.stringify({rec: REC, nid: NID, tid: TID, prj: PRJ, pjid: PJID, cats: PROJECT_CATEGORIES}));
   const el = $('sv'); if (el) el.textContent = 'Saved ' + new Date().toLocaleTimeString();
-  // Always push something onto the queue so the eventual flush has work to do.
-  syncQueue.push({ts: Date.now()}); saveQueue(); updateSyncStatus();
-  // If not online or no sync url set: queue only — when we come back online,
-  // the retry interval or the next user action will flush.
+
+  // Tag THIS change with a unique marker so we can verify it was actually pushed.
+  const myMarker = {ts: Date.now(), id: 'm' + Math.random().toString(36).slice(2,9)};
+  syncQueue.push(myMarker); saveQueue(); updateSyncStatus();
+
   if (!syncCfg.scriptUrl || !isOnline) return false;
-  // Wait (up to 8s) for any in-flight push to finish before trying our own.
-  // This prevents false-negative warnings when deletes happen rapidly.
-  const waitStart = Date.now();
-  while (syncInFlight && Date.now() - waitStart < 8000) {
-    await new Promise(res => setTimeout(res, 50));
+
+  // Wait for our specific marker to be flushed. We check every 100ms for up to
+  // 20 seconds, kicking off additional flushes as needed.
+  const deadline = Date.now() + 20000;
+  let retries = 0;
+  while (Date.now() < deadline) {
+    // Is our marker still in the queue?
+    const stillQueued = syncQueue.some(q => q.id === myMarker.id);
+    if (!stillQueued) return true; // our change has been flushed
+    // Not flushed yet — if nothing is in flight, try to flush
+    if (!syncInFlight) {
+      const ok = await flushQueue();
+      if (!ok) {
+        retries++;
+        if (retries >= 5) break;
+        // Short backoff before trying again
+        await new Promise(res => setTimeout(res, 400 * retries));
+      }
+    } else {
+      // Something else is pushing; wait for it to finish
+      await new Promise(res => setTimeout(res, 100));
+    }
   }
-  // After the wait: the queue might already have been flushed by the other push
-  // (which included our data — REC is shared). Only proceed if queue isn't empty.
-  if (!syncQueue.length) return true;
-  // Try to flush up to 3 times with short backoff if something goes wrong.
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    const ok = await flushQueue();
-    if (ok) return true;
-    // If another push grabbed the queue while we were waiting, the queue is empty now
-    if (!syncQueue.length) return true;
-    if (attempt < 3) await new Promise(res => setTimeout(res, 400 * attempt));
-  }
-  // All retries failed — warn the user
   alert('⚠️ Warning: Your change was saved locally but could not sync to Google Sheets ' +
-        'after 3 attempts. Check your internet connection and click the ☁ Sync button, ' +
+        'within 20 seconds. Check your internet connection and click the ☁ Sync button, ' +
         'or the change may revert the next time this page reloads.');
   return false;
 }

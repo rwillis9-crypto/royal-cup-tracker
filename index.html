@@ -3059,6 +3059,104 @@ function confirmImport() {
 }
 
 // ── Sync Setup Modal ───────────────────────────────────────────────────────
+// ── Sync diagnostics & recovery ────────────────────────────────────────────
+async function runSyncDiagnostics() {
+  const out = $('diag-output');
+  if (!out) return;
+  out.style.display = '';
+  out.textContent = 'Running diagnostics...\n';
+
+  const lines = [];
+  lines.push('╔═══════════════════════════════════════════');
+  lines.push('║ SYNC DIAGNOSTICS');
+  lines.push('╚═══════════════════════════════════════════');
+  lines.push('');
+  lines.push('LOCAL STATE:');
+  lines.push('  • REC count (in memory): ' + REC.length);
+  lines.push('  • PRJ count (in memory): ' + PRJ.length);
+
+  // Check localStorage
+  try {
+    const ls = JSON.parse(localStorage.getItem(STORE) || '{}');
+    lines.push('  • REC count (localStorage): ' + (ls.rec ? ls.rec.length : 0));
+    lines.push('  • PRJ count (localStorage): ' + (ls.prj ? ls.prj.length : 0));
+  } catch(e) {
+    lines.push('  • localStorage: ERROR parsing - ' + e.message);
+  }
+
+  lines.push('');
+  lines.push('SYNC STATE:');
+  lines.push('  • isOnline: ' + isOnline);
+  lines.push('  • syncInFlight: ' + syncInFlight);
+  lines.push('  • syncQueue length: ' + syncQueue.length);
+  lines.push('  • last push ts: ' + (localStorage.getItem('rc_last_push_ts') || 'never'));
+  if (localStorage.getItem('rc_last_push_ts')) {
+    const pushDate = new Date(parseInt(localStorage.getItem('rc_last_push_ts')));
+    lines.push('  • last push: ' + pushDate.toLocaleString());
+  }
+  lines.push('  • script URL: ' + (syncCfg.scriptUrl ? syncCfg.scriptUrl.substring(0,50)+'...' : 'not set'));
+
+  out.textContent = lines.join('\n') + '\n\nFetching from Sheets...';
+
+  // Now fetch from Sheets to compare
+  try {
+    const resp = await fetch(syncCfg.scriptUrl + '?action=get&cb=' + Date.now(), {redirect: 'follow'});
+    const body = await resp.json();
+    lines.push('');
+    lines.push('REMOTE STATE (Google Sheets):');
+    lines.push('  • HTTP status: ' + resp.status);
+    lines.push('  • REC count (remote): ' + (body.rec ? body.rec.length : 0));
+    lines.push('  • PRJ count (remote): ' + (body.prj ? body.prj.length : 0));
+    lines.push('  • remote ts: ' + (body.ts || 'none'));
+    if (body.ts) {
+      const remoteDate = new Date(body.ts);
+      lines.push('  • remote saved: ' + remoteDate.toLocaleString());
+    }
+
+    lines.push('');
+    lines.push('COMPARISON:');
+    const localCount = REC.length;
+    const remoteCount = body.rec ? body.rec.length : 0;
+    if (localCount === remoteCount) {
+      lines.push('  ✓ Local and remote have SAME count (' + localCount + ')');
+    } else {
+      lines.push('  ⚠ MISMATCH: local=' + localCount + ', remote=' + remoteCount);
+      lines.push('    Difference: ' + (localCount - remoteCount) + ' records');
+      if (localCount < remoteCount) {
+        lines.push('    → Remote has MORE records than local. Your deletes haven\'t pushed.');
+        lines.push('    → Click "⚡ Force Push Local" to push your local state to Sheets.');
+      } else {
+        lines.push('    → Local has more records than remote. Something was added locally.');
+      }
+    }
+  } catch(e) {
+    lines.push('');
+    lines.push('ERROR fetching from Sheets:');
+    lines.push('  ' + e.message);
+  }
+
+  out.textContent = lines.join('\n');
+}
+
+async function forceResyncFromLocal() {
+  if (!confirm('This will FORCE push your current local data to Google Sheets, overwriting whatever is there. Continue?')) return;
+  const out = $('diag-output');
+  if (out) { out.style.display = ''; out.textContent = 'Force pushing local state to Sheets...'; }
+  try {
+    const ts = Date.now();
+    const payload = {rec: REC, nid: NID, tid: TID, prj: PRJ, pjid: PJID, cats: PROJECT_CATEGORIES, ts};
+    await pushToSheets(payload);
+    syncQueue = []; saveQueue();
+    localStorage.setItem('rc_last_push_ts', String(ts));
+    updateSyncStatus();
+    if (out) out.textContent = '✓ SUCCESS! Pushed ' + REC.length + ' records and ' + PRJ.length + ' projects to Sheets.\n\nYour local data is now the source of truth.';
+    alert('✓ Force push successful!');
+  } catch(e) {
+    if (out) out.textContent = '✗ FAILED: ' + e.message;
+    alert('Force push failed: ' + e.message);
+  }
+}
+
 function openSyncSetup() {
   const GAS_CODE = `// ═══════════════════════════════════════════════════
 // Royal Cup Tracker — Google Apps Script  v2
@@ -3145,8 +3243,11 @@ function jsonOut(obj) {
     <div class="sec">Actions</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
       <button class="btn" onclick="manualSync()">⟳ Sync now</button>
+      <button class="btn" onclick="runSyncDiagnostics()">🔍 Diagnostics</button>
+      <button class="btn" onclick="forceResyncFromLocal()" style="background:var(--amb);color:#fff;border-color:var(--amb)">⚡ Force Push Local</button>
       <button class="btn danger" onclick="disconnectSync()">Disconnect</button>
-    </div>` : ''}
+    </div>
+    <div id="diag-output" style="display:none;margin-top:12px;padding:10px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);font-family:var(--mono);font-size:11px;line-height:1.6;white-space:pre-wrap;color:var(--text);max-height:300px;overflow:auto"></div>` : ''}
 
     <div class="mfoot">
       <button class="btn" onclick="closeModal('ov-sync')">Cancel</button>

@@ -324,7 +324,10 @@ table.tkt tbody tr:hover td{background:var(--surf2);cursor:pointer}
 /* ── MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(18,18,16,.42);display:none;align-items:center;justify-content:center;z-index:300;backdrop-filter:blur(2px)}
 .overlay.show{display:flex}
-.modal{background:var(--surf);border-radius:var(--rxl);border:1px solid var(--bdr);padding:22px;width:min(570px,96vw);max-height:92vh;overflow-y:auto;box-shadow:var(--shd-md)}
+.modal{background:var(--surf);border-radius:var(--rxl);border:1px solid var(--bdr);padding:22px 22px 0;width:min(570px,96vw);max-height:92vh;overflow-y:auto;box-shadow:var(--shd-md)}
+/* Footer always sticks to the bottom of the visible modal area,
+   regardless of content length. */
+.modal > .mfoot{position:sticky;bottom:0;background:var(--surf);margin:16px -22px 0;padding:12px 22px 18px;border-top:1px solid var(--bdr);z-index:2}
 .mh{font-size:16px;font-weight:600;letter-spacing:-.2px;margin-bottom:16px}
 .sec{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text2);margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--bdr)}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
@@ -344,7 +347,7 @@ table.tkt tbody tr:hover td{background:var(--surf2);cursor:pointer}
 .ctog input{cursor:pointer;accent-color:var(--navy)}
 .csec{display:none}
 .csec.show{display:block}
-.mfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid var(--bdr)}
+.mfoot{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 /* Detail modal */
 .dl{font-size:10px;color:var(--text2);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
 .dv{font-size:13px;color:var(--text);line-height:1.5}
@@ -440,18 +443,32 @@ select {
 /* Always hide the individual action buttons — they live in the ⋯ More menu */
 .hdr-r .btn.mobile-hide { display: none !important; }
 
-/* ── TABLET (iPad) adjustments ─────────────────────────────────────── */
-@media (max-width: 1024px) {
+/* ── TABLET / SPLIT-SCREEN (641px–1024px) ────────────────────────────
+   Covers iPad portrait/landscape, Surface laptops at half-screen,
+   and any browser window between ~640 and 1024 pixels wide. */
+@media (min-width: 641px) and (max-width: 1024px) {
   .app { padding: 12px 14px; }
   body { font-size: 15px; }
   .hdr h1 { font-size: 20px; }
   .btn { height: 38px; font-size: 14px; padding: 0 14px; }
   .cards-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-  .stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
   .sn { font-size: 22px; }
   .vbtn { padding: 9px 16px; font-size: 14px; }
-  .modal { width: min(680px, 96vw); padding: 24px; }
+  /* Modal narrows proportionally to the viewport */
+  .modal { width: min(680px, 94vw); max-height: 90vh; padding: 20px 20px 0; }
+  .modal > .mfoot{margin:16px -20px 0;padding:12px 20px 16px}
   .mh { font-size: 18px; }
+  /* Form rows: keep 2 columns but allow wrapping */
+  .fr, .fr.tri { gap: 10px; }
+  /* Modal footer: smaller buttons, wrap if needed */
+  .mfoot { gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .mfoot .btn { height: 36px; font-size: 13px; padding: 0 12px; flex: 0 1 auto; }
+  /* Task row: keep items on one line */
+  .titem { flex-wrap: wrap; }
+  .add-task { flex-wrap: wrap; }
+  .add-task input[type=text] { min-width: 130px; }
+  /* Detail view header: allow wrapping */
+  .d2 { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
 }
 
 /* ── MOBILE (iPhone portrait) — main readability pass ────────────── */
@@ -579,8 +596,12 @@ select {
     max-height: 100vh;
     border-radius: 0;
     border: none;
-    padding: 16px 18px 80px 18px;   /* extra bottom padding for footer buttons */
+    padding: 16px 18px 0;
     min-height: 100vh;
+  }
+  .modal > .mfoot {
+    margin: 16px -18px 0;
+    padding: 12px 18px 18px;
   }
   /* Close button: fixed top right, bigger */
   .modal .mh { font-size: 19px; padding-right: 40px; }
@@ -620,16 +641,10 @@ select {
   .add-task select { height: 44px; font-size: 15px; width: 100%; }
   .add-task .abtn { height: 44px; padding: 0 16px; font-size: 14px; width: 100%; }
 
-  /* Modal footer: pin to bottom with backdrop */
+  /* Modal footer: stack buttons on small screens */
   .mfoot {
     flex-direction: column;
     gap: 8px;
-    padding-top: 14px;
-    margin-top: 18px;
-    position: sticky;
-    bottom: 0;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), var(--surf) 30%);
-    padding-bottom: 10px;
   }
   .mfoot .btn { width: 100%; justify-content: center; height: 46px; font-size: 15px; font-weight: 600; }
 
@@ -2037,7 +2052,10 @@ function openDetail(id) {
           ${r.chainNumber?`<span style="font-size:11px;color:var(--text2);font-family:var(--mono)">Chain # ${escHtml(r.chainNumber)}</span>`:''}
         </div>
       </div>
-      <button class="btn" onclick="closeModal('ov-main')">✕</button>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn" onclick="openInNewTab('record',${r.id})" title="Open this record in a new tab" style="padding:0 10px">↗</button>
+        <button class="btn" onclick="closeModal('ov-main')">✕</button>
+      </div>
     </div>
     ${(()=>{
       // If this record is a parent, render a Children section + aggregate stats
@@ -2165,6 +2183,36 @@ function toggleSection(id) {
   const visible = el.style.display !== 'none';
   el.style.display = visible ? 'none' : '';
   if (toggleBtn) toggleBtn.textContent = visible ? 'Show ▾' : 'Hide ▴';
+}
+
+// ── Open a record or project in a new browser tab ──────────────────────────
+// Builds a URL with a query parameter (e.g. ?record=42 or ?project=pj3)
+// When that URL is opened, the init code below will auto-open the detail modal.
+function openInNewTab(kind, id) {
+  const base = location.origin + location.pathname;
+  const param = kind === 'record' ? 'record' : 'project';
+  const url = base + '?' + param + '=' + encodeURIComponent(id);
+  window.open(url, '_blank');
+}
+
+// Check the URL on load and auto-open the matching detail modal.
+// This runs after init so REC/PRJ are already populated.
+function autoOpenFromURL() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const recId = params.get('record');
+    const prjId = params.get('project');
+    if (recId) {
+      const id = parseInt(recId);
+      if (REC.find(x => x.id === id)) {
+        setTimeout(() => openDetail(id), 200);
+      }
+    } else if (prjId) {
+      if (PRJ.find(x => x.id === prjId)) {
+        setTimeout(() => openProjectDetail(prjId), 200);
+      }
+    }
+  } catch(e) { console.warn('autoOpenFromURL error:', e); }
 }
 
 // ── Multi-contact helpers ──────────────────────────────────────────────────
@@ -3596,7 +3644,10 @@ function openProjectDetail(id) {
           ${p.category?`<span style="font-size:11px;color:var(--text2)">${escHtml(p.category)}</span>`:''}
         </div>
       </div>
-      <button class="btn" onclick="closeModal('ov-main')">✕</button>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn" onclick="openInNewTab('project','${p.id}')" title="Open this project in a new tab" style="padding:0 10px">↗</button>
+        <button class="btn" onclick="closeModal('ov-main')">✕</button>
+      </div>
     </div>
     ${p.description?`<div class="dbox" style="margin-bottom:10px"><div class="dl">Description</div><div style="font-size:13px;line-height:1.6;margin-top:3px">${escHtml(p.description)}</div></div>`:''}
     ${p.dueDate?`<div class="dbox navy" style="margin-bottom:10px">
@@ -3878,8 +3929,11 @@ document.querySelectorAll('.vbtn').forEach(b => {
 }
 render();
 updateSyncStatus();
+// Auto-open the record/project from URL query parameter (if present)
+autoOpenFromURL();
 // After local render, try to pull latest from Sheets in background
-loadFromSheets();
+// If the record wasn't found locally, try again after the pull completes
+loadFromSheets().then(() => autoOpenFromURL());
 // Re-try flush every 30s in case of intermittent connectivity
 setInterval(() => { if (syncQueue.length && isOnline) flushQueue(); }, 30000);
 </script>

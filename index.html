@@ -177,6 +177,12 @@ html[data-theme="dark"] .b-acc{background:#5B87D4;color:#0A0A0A}
 .ap-entry .ape-body{font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--text)}
 .ap-entry button.ape-del{width:20px;height:20px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:14px;border-radius:4px;flex-shrink:0}
 .ap-entry button.ape-del:hover{background:var(--red-s);color:var(--red)}
+/* Task notes */
+.tnote-btn{font-size:10px;color:var(--text3);cursor:pointer;border:1px dashed var(--bdr);padding:1px 7px;border-radius:20px;background:transparent;font-family:var(--font)}
+.tnote-btn.has-note{background:#FFF8E0;color:#7A5E10;border:1px solid #E5C76E;font-weight:600}
+html[data-theme="dark"] .tnote-btn.has-note{background:#3A2E0A;color:#F5DE80;border-color:#8A7020}
+.tnote-box{background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:8px 10px;margin-top:5px;font-size:12px;white-space:pre-wrap;color:var(--text);line-height:1.5;width:100%}
+.tnote-box .tnote-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:3px}
 .ap-add{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .ap-add input[type=text]{flex:1;min-width:140px;height:30px;font-size:12px;padding:0 8px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font)}
 .ap-add textarea{width:100%;min-height:60px;font-size:12px;padding:7px 9px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf);color:var(--text);font-family:var(--font);outline:none;margin-top:6px}
@@ -186,14 +192,18 @@ html[data-theme="dark"] .b-acc{background:#5B87D4;color:#0A0A0A}
 /* Parent/Child chain indicators */
 .b-parent{background:#1B2A4A;color:#fff;font-size:9px;padding:1px 7px;border-radius:20px;font-weight:600;letter-spacing:.03em}
 .b-child{background:#E8EDF5;color:#1B2A4A;font-size:9px;padding:1px 7px;border-radius:20px;font-weight:600;border:1px solid #5C7BBF}
-/* Table view: customer rows get a navy left border to stand out */
+/* Table view: customer rows get navy left border + subtle tinted background */
+table.ct tr.r-acc td{background:#F3F6FB}
 table.ct tr.r-acc td:first-child{border-left:4px solid var(--navy)}
 table.ct tr.r-acc .t-name{color:var(--navy);font-weight:700}
+html[data-theme="dark"] table.ct tr.r-acc td{background:#1F2638}
 html[data-theme="dark"] table.ct tr.r-acc .t-name{color:#8FB0E0}
 table.ct tr.r-pro td:first-child{border-left:2px solid var(--bdr)}
-/* Task list table: customer rows get a navy left border too */
+/* Task list table: customer rows get navy left border + tint too */
+table.tkt tr.r-acc td{background:#F3F6FB}
 table.tkt tr.r-acc td:first-child{border-left:4px solid var(--navy)}
 table.tkt tr.r-acc .tk-co{color:var(--navy);font-weight:700}
+html[data-theme="dark"] table.tkt tr.r-acc td{background:#1F2638}
 html[data-theme="dark"] table.tkt tr.r-acc .tk-co{color:#8FB0E0}
 .card.is-parent{border-left:3px solid #1B2A4A;border-top:1px solid #1B2A4A}
 .card.is-child{border-left:3px dashed #5C7BBF}
@@ -240,15 +250,15 @@ html[data-theme="dark"] table.tkt tr.r-acc .tk-co{color:#8FB0E0}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
 .card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:13px 15px;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:var(--shd)}
 .card:hover{border-color:var(--bdr2);box-shadow:var(--shd-md)}
-/* Customer (account) cards: bold navy — thick left bar + top accent + stronger shadow */
+/* Customer (account) cards: bold navy — thick left bar + top accent + stronger shadow + full blue tint */
 .card.is-acc{
   border-left:5px solid var(--navy);
   border-top:2px solid var(--navy);
   box-shadow:0 2px 6px rgba(27,42,74,.14),0 1px 2px rgba(27,42,74,.08);
-  background:linear-gradient(180deg,#F7F9FD 0%,var(--surf) 40%);
+  background:#EDF2FB;  /* full navy-tinted background — readable but clearly different */
 }
 html[data-theme="dark"] .card.is-acc{
-  background:linear-gradient(180deg,#1F2638 0%,var(--surf) 40%);
+  background:#1F2638;
 }
 .card.is-acc:hover{
   border-left-color:var(--navy);
@@ -292,6 +302,10 @@ html[data-theme="dark"] .card.is-acc .c-name{color:#8FB0E0}
   border-left:4px solid var(--navy);
   border-top:1px solid var(--navy);
   box-shadow:0 1px 3px rgba(27,42,74,.12);
+  background:#EDF2FB;
+}
+html[data-theme="dark"] .kb-card.is-acc{
+  background:#1F2638;
 }
 .kb-card.is-acc .kb-name{color:var(--navy);font-weight:700}
 html[data-theme="dark"] .kb-card.is-acc .kb-name{color:#8FB0E0}
@@ -1676,6 +1690,42 @@ function renderTable() {
 function tSort(col) { if (tblSort===col) tblDir*=-1; else {tblSort=col;tblDir=1;} renderTable(); }
 function toggleExp(id) { expandedRow = expandedRow===id ? null : id; renderTable(); }
 
+// ── Daily motivational quote (via ZenQuotes.io) ──────────────────────────
+// Cached in localStorage by day so we only hit the API once per day per device.
+async function fetchDailyQuote() {
+  const today = new Date();
+  const dayKey = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  const cached = localStorage.getItem('rc_quote_'+dayKey);
+  if (cached) { try { return JSON.parse(cached); } catch(e) {} }
+  // Use a CORS proxy since ZenQuotes doesn't allow direct browser fetches
+  try {
+    const resp = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://zenquotes.io/api/today'));
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (Array.isArray(data) && data[0] && data[0].q) {
+      const quote = {q: data[0].q, a: data[0].a || 'Unknown'};
+      // Clean up old cached quotes
+      Object.keys(localStorage).forEach(k => { if (k.startsWith('rc_quote_') && k !== 'rc_quote_'+dayKey) localStorage.removeItem(k); });
+      localStorage.setItem('rc_quote_'+dayKey, JSON.stringify(quote));
+      return quote;
+    }
+  } catch(e) { console.warn('Quote fetch failed:', e); }
+  return null;
+}
+
+// Update the quote in the DOM once it arrives (async)
+async function loadQuoteIntoMyDay() {
+  const box = document.getElementById('md-quote');
+  if (!box) return;
+  const q = await fetchDailyQuote();
+  if (q) {
+    box.innerHTML = `<div style="font-style:italic;line-height:1.5;font-size:13px;color:var(--text)">"${escHtml(q.q)}"</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px;text-align:right">— ${escHtml(q.a)}</div>`;
+  } else {
+    box.innerHTML = `<div style="font-size:11px;color:var(--text3);font-style:italic">Daily quote unavailable (offline)</div>`;
+  }
+}
+
 // ── My Day View ────────────────────────────────────────────────────────────
 function renderMyDay() {
   const q = ($('srch')?.value || '').toLowerCase().trim();
@@ -1746,15 +1796,18 @@ function renderMyDay() {
   }
 
   $('myday-content').innerHTML = `
-    <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px">
-      <div>
+    <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+      <div style="flex:0 0 auto;min-width:200px">
         <div style="font-size:18px;font-weight:600;letter-spacing:-.3px;color:var(--navy)">${dayStr}</div>
         <div style="font-size:12px;color:var(--text2);margin-top:2px">Your day at a glance</div>
+        <div style="display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text2);margin-top:8px;flex-wrap:wrap">
+          <span class="ppill p1">P1</span> Urgent
+          <span class="ppill p2">P2</span> Do Soon
+          <span class="ppill p3">P3</span> Parking Lot
+        </div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center;font-size:11px;color:var(--text2)">
-        <span class="ppill p1">P1</span> Urgent &nbsp;
-        <span class="ppill p2">P2</span> Do Soon &nbsp;
-        <span class="ppill p3">P3</span> Parking Lot
+      <div id="md-quote" style="flex:1 1 280px;min-width:240px;max-width:500px;background:var(--surf);border:1px solid var(--bdr);border-left:4px solid var(--gold);border-radius:var(--r);padding:12px 14px;box-shadow:var(--shd)">
+        <div style="font-size:11px;color:var(--text3);font-style:italic">Loading daily inspiration…</div>
       </div>
     </div>
     ${section('#B83030', '🔴 Overdue', overdue, 'Nothing overdue — well done!')}
@@ -1765,6 +1818,8 @@ function renderMyDay() {
     </div>
     ${section('#5C5246', '🅿️ Parking Lot — P3', parkingLot, 'No Parking Lot items')}
   `;
+  // Load the daily quote asynchronously (doesn't block rendering)
+  loadQuoteIntoMyDay();
 }
 
 // ── Projects View ──────────────────────────────────────────────────────────
@@ -2508,17 +2563,51 @@ function taskItemHTML(recId, t) {
   const recBadge = recLbl
     ? `<span style="font-size:10px;font-weight:600;color:#5C7BBF;background:#E8EDF5;border:1px solid #B0C0E0;padding:1px 7px;border-radius:20px;cursor:pointer;white-space:nowrap" onclick="event.stopPropagation();editTaskRecurrence('customer',${recId},'${t.id}')" title="${recLbl} — click to edit">🔁 ${recurrenceShort(t.recurrence)}</span>`
     : `<span style="font-size:10px;color:var(--text3);cursor:pointer;border:1px dashed var(--bdr);padding:1px 6px;border-radius:20px" onclick="event.stopPropagation();editTaskRecurrence('customer',${recId},'${t.id}')" title="Set recurrence">🔁</span>`;
-  return `<div class="titem${t.done?' done':''}" id="ti-${t.id}" data-done="${t.done}">
+  const hasNote = !!(t.notes && t.notes.trim());
+  const noteBtn = `<button class="tnote-btn ${hasNote?'has-note':''}" onclick="event.stopPropagation();editTaskNotes('customer',${recId},'${t.id}')" title="${hasNote?'Edit note':'Add note'}">📝${hasNote?' Note':''}</button>`;
+  return `<div class="titem${t.done?' done':''}" id="ti-${t.id}" data-done="${t.done}" style="flex-wrap:wrap">
     <input type="checkbox" ${t.done?'checked':''} onclick="toggleTask(${recId},'${t.id}')">
     <span class="tt">${t.title}</span>
     <span class="ppill ${pCls}" style="font-size:9px;cursor:pointer" onclick="event.stopPropagation();editTaskPriority(${recId},'${t.id}')" title="Click to override priority${isOverride?' (manual override active)':''}">${priorityShort(tp)}${isOverride?' '+isOverride:''}</span>
     ${recBadge}
+    ${noteBtn}
     ${dp}
     <button class="tdel" onclick="deleteTask(${recId},'${t.id}')" title="Remove">×</button>
+    ${hasNote?`<div class="tnote-box" style="margin-left:30px"><div class="tnote-lbl">Note</div>${escHtml(t.notes)}</div>`:''}
   </div>`;
 }
 
 // Manual priority override on a task — works for both customer and project tasks
+// ── Task notes (works on both customer and project tasks) ────────────────
+function editTaskNotes(kind, ownerId, taskId) {
+  const owner = kind === 'customer'
+    ? REC.find(x => x.id === parseInt(ownerId))
+    : PRJ.find(x => x.id === String(ownerId));
+  if (!owner) return;
+  const t = (owner.tasks||[]).find(x => x.id === taskId);
+  if (!t) return;
+  const current = t.notes || '';
+  const result = prompt(
+    'Task notes for: "' + t.title + '"\n\n' +
+    'Add any details, context, links, or next steps. Leave blank to remove notes.',
+    current
+  );
+  if (result === null) return; // cancelled
+  const clean = result.trim();
+  if (clean === '') {
+    delete t.notes;
+  } else {
+    t.notes = clean;
+  }
+  save();
+  if (kind === 'customer') {
+    if ($('ov-main').classList.contains('show')) openDetail(owner.id);
+  } else {
+    if ($('ov-main').classList.contains('show')) openProjectDetail(owner.id);
+  }
+  render();
+}
+
 function editTaskPriority(recId, taskId) {
   // Try customer first
   let owner = REC.find(x => x.id === recId);
@@ -3737,13 +3826,17 @@ function projectTaskItemHTML(pjId, t) {
   const recBadge = recLbl
     ? `<span style="font-size:10px;font-weight:600;color:#5C7BBF;background:#E8EDF5;border:1px solid #B0C0E0;padding:1px 7px;border-radius:20px;cursor:pointer;white-space:nowrap" onclick="event.stopPropagation();editTaskRecurrence('project','${pjId}','${t.id}')" title="${recLbl} — click to edit">🔁 ${recurrenceShort(t.recurrence)}</span>`
     : `<span style="font-size:10px;color:var(--text3);cursor:pointer;border:1px dashed var(--bdr);padding:1px 6px;border-radius:20px" onclick="event.stopPropagation();editTaskRecurrence('project','${pjId}','${t.id}')" title="Set recurrence">🔁</span>`;
-  return `<div class="titem${t.done?' done':''}" id="pti-${t.id}" data-done="${t.done}">
+  const hasNote = !!(t.notes && t.notes.trim());
+  const noteBtn = `<button class="tnote-btn ${hasNote?'has-note':''}" onclick="event.stopPropagation();editTaskNotes('project','${pjId}','${t.id}')" title="${hasNote?'Edit note':'Add note'}">📝${hasNote?' Note':''}</button>`;
+  return `<div class="titem${t.done?' done':''}" id="pti-${t.id}" data-done="${t.done}" style="flex-wrap:wrap">
     <input type="checkbox" ${t.done?'checked':''} onclick="toggleProjectTask('${pjId}','${t.id}')">
     <span class="tt">${escHtml(t.title)}</span>
     <span class="ppill ${pCls}" style="font-size:9px">${priorityShort(tp)}</span>
     ${recBadge}
+    ${noteBtn}
     ${dp}
     <button class="tdel" onclick="deleteProjectTask('${pjId}','${t.id}')" title="Remove">×</button>
+    ${hasNote?`<div class="tnote-box" style="margin-left:30px"><div class="tnote-lbl">Note</div>${escHtml(t.notes)}</div>`:''}
   </div>`;
 }
 

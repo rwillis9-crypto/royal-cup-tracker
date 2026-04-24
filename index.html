@@ -138,8 +138,9 @@ body::before{content:'';display:block;height:3px;background:var(--navy);position
 .b-customer{background:#E8EDF5;color:#1B2A4A}
 .b-on-hold{background:var(--grys);color:var(--gryt)}
 .b-new-request{background:var(--gold-s);color:var(--gold-t)}
-.b-acc{background:#E8EDF5;color:#1B2A4A;font-size:9px;padding:1px 6px;border-radius:20px;font-weight:600}
-.b-pro{background:var(--gold-s);color:var(--gold-t);font-size:9px;padding:1px 6px;border-radius:20px;font-weight:600}
+.b-acc{background:var(--navy);color:#fff;font-size:9px;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+html[data-theme="dark"] .b-acc{background:#5B87D4;color:#0A0A0A}
+.b-pro{background:var(--surf2);color:var(--text2);font-size:9px;padding:1px 6px;border-radius:20px;font-weight:600;border:1px solid var(--bdr)}
 .p-hi{color:var(--red);font-weight:600}
 .p-md{color:#9A6B00;font-weight:600}
 .p-lo{color:var(--grn);font-weight:600}
@@ -185,6 +186,15 @@ body::before{content:'';display:block;height:3px;background:var(--navy);position
 /* Parent/Child chain indicators */
 .b-parent{background:#1B2A4A;color:#fff;font-size:9px;padding:1px 7px;border-radius:20px;font-weight:600;letter-spacing:.03em}
 .b-child{background:#E8EDF5;color:#1B2A4A;font-size:9px;padding:1px 7px;border-radius:20px;font-weight:600;border:1px solid #5C7BBF}
+/* Table view: customer rows get a navy left border to stand out */
+table.ct tr.r-acc td:first-child{border-left:4px solid var(--navy)}
+table.ct tr.r-acc .t-name{color:var(--navy);font-weight:700}
+html[data-theme="dark"] table.ct tr.r-acc .t-name{color:#8FB0E0}
+table.ct tr.r-pro td:first-child{border-left:2px solid var(--bdr)}
+/* Task list table: customer rows get a navy left border too */
+table.tkt tr.r-acc td:first-child{border-left:4px solid var(--navy)}
+table.tkt tr.r-acc .tk-co{color:var(--navy);font-weight:700}
+html[data-theme="dark"] table.tkt tr.r-acc .tk-co{color:#8FB0E0}
 .card.is-parent{border-left:3px solid #1B2A4A;border-top:1px solid #1B2A4A}
 .card.is-child{border-left:3px dashed #5C7BBF}
 .kb-card.is-parent{border-left:2px solid #1B2A4A}
@@ -230,8 +240,25 @@ body::before{content:'';display:block;height:3px;background:var(--navy);position
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
 .card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:13px 15px;cursor:pointer;transition:border-color .15s,box-shadow .15s;box-shadow:var(--shd)}
 .card:hover{border-color:var(--bdr2);box-shadow:var(--shd-md)}
-.card.is-acc{border-left:3px solid var(--navy)}
-.card.is-pro{border-left:3px solid var(--gold)}
+/* Customer (account) cards: bold navy — thick left bar + top accent + stronger shadow */
+.card.is-acc{
+  border-left:5px solid var(--navy);
+  border-top:2px solid var(--navy);
+  box-shadow:0 2px 6px rgba(27,42,74,.14),0 1px 2px rgba(27,42,74,.08);
+  background:linear-gradient(180deg,#F7F9FD 0%,var(--surf) 40%);
+}
+html[data-theme="dark"] .card.is-acc{
+  background:linear-gradient(180deg,#1F2638 0%,var(--surf) 40%);
+}
+.card.is-acc:hover{
+  border-left-color:var(--navy);
+  border-top-color:var(--navy);
+  box-shadow:0 4px 12px rgba(27,42,74,.22),0 2px 4px rgba(27,42,74,.12);
+}
+.card.is-acc .c-name{color:var(--navy);font-weight:700}
+html[data-theme="dark"] .card.is-acc .c-name{color:#8FB0E0}
+/* Prospect cards: lighter, softer accent (standard) */
+.card.is-pro{border-left:3px solid var(--bdr2)}
 .c-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .c-name{font-size:15px;font-weight:600;letter-spacing:-.2px;line-height:1.3}
 .c-sub{font-size:11px;color:var(--text2);margin-top:2px}
@@ -261,8 +288,14 @@ body::before{content:'';display:block;height:3px;background:var(--navy);position
 .kb-cards{padding:7px;display:flex;flex-direction:column;gap:6px;min-height:60px}
 .kb-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:9px 11px;cursor:pointer;box-shadow:var(--shd);transition:border-color .15s,box-shadow .15s}
 .kb-card:hover{border-color:var(--bdr2);box-shadow:var(--shd-md)}
-.kb-card.is-acc{border-left:2px solid var(--navy)}
-.kb-card.is-pro{border-left:2px solid var(--gold)}
+.kb-card.is-acc{
+  border-left:4px solid var(--navy);
+  border-top:1px solid var(--navy);
+  box-shadow:0 1px 3px rgba(27,42,74,.12);
+}
+.kb-card.is-acc .kb-name{color:var(--navy);font-weight:700}
+html[data-theme="dark"] .kb-card.is-acc .kb-name{color:#8FB0E0}
+.kb-card.is-pro{border-left:2px solid var(--bdr2)}
 .kb-name{font-size:13px;font-weight:600;margin-bottom:3px}
 .kb-val{font-size:11px;color:var(--text2);margin-bottom:4px}
 .kb-next{font-size:11px;color:var(--text);background:var(--surf2);border-radius:5px;padding:4px 7px;border-left:2px solid var(--gold);line-height:1.4;margin-bottom:5px}
@@ -1961,7 +1994,7 @@ function renderTasks() {
       const iDs  = dStat(r.installDate);
       const iCls = iDs==='over'?'due-over':iDs==='soon'?'due-soon':'due-ok';
       const isA  = r.type==='account';
-      return `<tr class="${rowCls}" style="${t.done?'opacity:.5':''}" onclick="openDetail(${r.id})">
+      return `<tr class="${rowCls} ${r.type==='account'?'r-acc':'r-pro'}" style="${t.done?'opacity:.5':''}" onclick="openDetail(${r.id})">
         <td><div class="tk-co">${r.company}</div><span class="${isA?'b-acc':'b-pro'} tk-type">${isA?'Account':'Prospect'}</span></td>
         <td><span class="bdg ${scls(r.stage)}">${r.stage}</span></td>
         <td><div class="tk-title" style="${t.done?'text-decoration:line-through;color:var(--text3)':''}">${t.title}</div></td>
@@ -2039,9 +2072,9 @@ function openDetail(id) {
   const iCls = iDs==='over'?'due-over':iDs==='soon'?'due-soon':'due-ok';
   const hasContact = r.name || r.contact || r.phone || r.owner;
   $('m-main').innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;${r.type==='account'?'padding:12px 14px;background:linear-gradient(135deg,rgba(27,42,74,.08),rgba(27,42,74,.02));border-left:5px solid var(--navy);border-radius:var(--r);margin:-10px -4px 14px':''}">
       <div style="flex:1;min-width:0">
-        <div style="font-size:18px;font-weight:600;letter-spacing:-.3px">${r.company}</div>
+        <div style="font-size:18px;font-weight:${r.type==='account'?'700':'600'};letter-spacing:-.3px;color:${r.type==='account'?'var(--navy)':'var(--text)'}">${r.company}</div>
         ${(()=>{const par=getParent(r);return par?`<div class="parent-link" onclick="openDetail(${par.id})" style="margin-top:3px">⛓ Part of: ${escHtml(par.company)}</div>`:'';})()}
         <div style="font-size:12px;color:var(--text2);margin-top:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <span class="bdg ${scls(r.stage)}">${r.stage}</span>
